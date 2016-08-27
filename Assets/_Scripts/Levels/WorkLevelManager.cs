@@ -22,10 +22,14 @@ public class WorkLevelManager : MonoBehaviour
         WorkGuiManager.OnAccept += OnShitterAccepted;
         WorkGuiManager.OnDeny += OnShitterDenied;
 
-        _shitters = GameManager.Instance.GetShittersForToday();
+        var shitters = GameManager.Instance.GetShittersForToday();
+        _shitters = new Queue<Shitter>();
 
-        for (int i = 0; i < _shitters.Count; i++)
-            QueueManager.AddPeople();
+        for (int i = 0; i < shitters.Count; i++)
+        {
+            QueueManager.AddPeople(shitters[i]);
+            _shitters.Enqueue(shitters[i]);
+        }
 
         CoroutineHelper.Instance.WaitForSecondsAndCall(1f, UpdateQueue);
     }
@@ -78,7 +82,7 @@ public class WorkLevelManager : MonoBehaviour
     private void OnShitterAccepted()
     {
         string message = _currentShitter.Accepted();
-        QueueManager.RemovePeople();
+        QueueManager.RemovePeople(_currentShitter);
         WorkGuiManager.ShowMessage(_currentShitter, message, () =>
         {
             StartCoroutine(ShitterShiting(_currentShitter));
@@ -88,7 +92,7 @@ public class WorkLevelManager : MonoBehaviour
     private void OnShitterDenied()
     {
         string message = _currentShitter.Denied();
-        QueueManager.RemovePeople();
+        QueueManager.RemovePeople(_currentShitter);
         WorkGuiManager.ShowMessage(_currentShitter, message, () =>
         {
             ShitterLeave(true);

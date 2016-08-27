@@ -14,7 +14,7 @@ public class Shitter
     public string Name;
     public string Story;
     public int ShitAmmount;
-    public Sprite TextureShitter;
+    public Sprite SpriteShitter;
     public SocialPosition SocialPosition;
 
     public readonly Dictionary<int, bool> AllTimeDecisions = new Dictionary<int, bool>();

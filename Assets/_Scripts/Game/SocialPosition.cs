@@ -1,4 +1,7 @@
-﻿public enum SocialPosition
+﻿using System;
+
+[Serializable]
+public enum SocialPosition
 {
     Villager,
     Police,

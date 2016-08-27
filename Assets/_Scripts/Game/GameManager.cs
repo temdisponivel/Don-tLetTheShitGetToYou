@@ -35,8 +35,23 @@ public class GameManager : Singleton<GameManager>
     }
 
     public int CurrentDay { get; set; }
-    public int CurrentHour;
-    
+
+    private int _currentHour;
+
+    public int CurrentHour
+    {
+        get
+        {
+            return _currentHour;
+        }
+        set
+        {
+            _currentHour = value;
+            if (OnUpdateTime != null)
+                OnUpdateTime();
+        }
+    }
+
     public Image BackgroundFade;
 
     public readonly List<Shitter> AllTimeShitters = new List<Shitter>();
@@ -102,11 +117,8 @@ public class GameManager : Singleton<GameManager>
         int count = 8;
         while (count-- > 0)
         {
-            yield return new WaitForSeconds(30);
+            yield return new WaitForSeconds(15f);
             CurrentHour++;
-            Debug.Log("HOUR");
-            if (OnUpdateTime != null)
-                OnUpdateTime();
         }
         EndDay();
     }
@@ -132,10 +144,11 @@ public class GameManager : Singleton<GameManager>
             DOTween.ToAlpha(() => BackgroundFade.color, (color) =>
             {
                 BackgroundFade.color = color;
-
+            }, 0f, .5f).OnComplete(() =>
+            {
                 if (callback != null)
                     callback();
-            }, 0f, .5f);
+            });
         });
     }
 
@@ -159,20 +172,20 @@ public class GameManager : Singleton<GameManager>
 
     #region Shitters
 
-    public Queue<Shitter> GetShittersForToday()
+    public List<Shitter> GetShittersForToday()
     {
         var gameConfiguration = ScriptableObjectHolder.Instance.GameConfiguration;
 
-        int quantityToGenerate = (int) Mathf.Ceil(gameConfiguration.ShittersToGeneratePerDay * Random.Range(.7f, 1.3f));
+        int quantityToGenerate = (int)Mathf.Ceil(gameConfiguration.ShittersToGeneratePerDay * Random.Range(.7f, 1.3f));
         var newShitters = ShitterFactory.GenerateShitters(quantityToGenerate);
         AllTimeShitters.AddRange(newShitters);
 
-        int quantityToReturn = (int)Mathf.Ceil(gameConfiguration.ShittersPerDay + (gameConfiguration.ShittersPerDayIncrease*CurrentDay));
+        int quantityToReturn = (int)Mathf.Ceil(gameConfiguration.ShittersPerDay + (gameConfiguration.ShittersPerDayIncrease * CurrentDay));
 
-        var result = new Queue<Shitter>(quantityToReturn);
+        var result = new List<Shitter>(quantityToReturn);
         for (int i = 0; i < quantityToReturn; i++)
         {
-            result.Enqueue(AllTimeShitters[Random.Range(0, AllTimeShitters.Count)]);
+            result.Add(AllTimeShitters[Random.Range(0, AllTimeShitters.Count)]);
         }
 
         return result;

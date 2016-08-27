@@ -15,4 +15,6 @@ public class GameDatabaseScriptableObject : ScriptableObject
     public List<string> WakeupMessages;
 
     public string InitialMessage;
+
+    public List<SocialPositionSpriteTuple> SpriteBySocialPosition = new List<SocialPositionSpriteTuple>();
 }

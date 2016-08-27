@@ -8,4 +8,5 @@ public class GameConfigurationScriptableObject : ScriptableObject
     public int ShittersToGeneratePerDay;
     public float ShittersPerDay;
     public float ShittersPerDayIncrease;
+    public float MaxShitPerShitter;
 }

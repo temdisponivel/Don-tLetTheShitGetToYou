@@ -12,7 +12,7 @@ public class ClockManager : MonoBehaviour
         _initialAngle = this.transform.rotation.eulerAngles;
         GameManager.Instance.OnUpdateTime += () =>
         {
-            this.transform.rotation = Quaternion.Euler(_initialAngle + new Vector3(0, 0, (float) -(((60*8)/180f) * GameManager.Instance.CurrentHour)));
+            this.transform.rotation = Quaternion.Euler(_initialAngle + new Vector3(0, 0, (float) -(((15*8)/180f) * GameManager.Instance.CurrentHour)));
         };
 
         SceneManager.sceneLoaded += (scene, mode) =>

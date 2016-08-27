@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class WorkGuiManager : MonoBehaviour
 {
+    public ShitterQueueItem CurrentShitterItem;
     public Text TextName;
     public Text TextMessage;
     public Button AcceptButton;
@@ -17,10 +18,20 @@ public class WorkGuiManager : MonoBehaviour
     public event Action OnAccept;
     public event Action OnDeny;
 
+    #region Unity events
+
     void Start()
     {
         GameManager.Instance.OnShitAmmountChanges += UpdateShitCounter;
+        CurrentShitterItem.FadeOut();
     }
+
+    void OnDestroy()
+    {
+        GameManager.Instance.OnShitAmmountChanges -= UpdateShitCounter;
+    }
+
+    #endregion
 
     #region UI callbacks
 
@@ -42,7 +53,7 @@ public class WorkGuiManager : MonoBehaviour
 
     public void ShitterArrive(Shitter shitter, Action callback)
     {
-        ImageShitter.sprite = shitter.TextureShitter;
+        ImageShitter.sprite = shitter.SpriteShitter;
         DOTween.ToAlpha(() => ImageShitter.color, (color) =>
         {
             ImageShitter.color = color;
@@ -52,6 +63,8 @@ public class WorkGuiManager : MonoBehaviour
             if (callback != null)
                 callback();
         });
+        CurrentShitterItem.Setup(shitter);
+        CurrentShitterItem.FadeIn();
         SetButtons(false);
     }
 
@@ -61,6 +74,7 @@ public class WorkGuiManager : MonoBehaviour
         {
             ImageShitter.color = color;
         }, 0f, 1f);
+        CurrentShitterItem.FadeOut();
         TextName.text = string.Empty;
         TextMessage.text = string.Empty;
         SetButtons(false);
@@ -128,6 +142,11 @@ public class WorkGuiManager : MonoBehaviour
     {
         AcceptButton.interactable = enable;
         DenyButton.interactable = enable;
+    }
+
+    private void SetCurrentShitterItem(Shitter shitter)
+    {
+        
     }
 
     #endregion
