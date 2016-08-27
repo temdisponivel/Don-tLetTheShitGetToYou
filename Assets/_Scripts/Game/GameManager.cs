@@ -35,13 +35,15 @@ public class GameManager : Singleton<GameManager>
     }
 
     public int CurrentDay { get; set; }
-    public TimeSpan DateTime;
+    public int CurrentHour;
     
     public Image BackgroundFade;
 
     public readonly List<Shitter> AllTimeShitters = new List<Shitter>();
 
     public ShitterFactory ShitterFactory = new ShitterFactory();
+
+    public bool ShownInitialMessage { get; set; }
 
     #endregion
 
@@ -83,8 +85,8 @@ public class GameManager : Singleton<GameManager>
 
     public void EndDay()
     {
-        ShitAmmount = ScriptableObjectHolder.Instance.GameConfiguration.MaxShitAmmountDecreasePerDay * CurrentDay;
-
+        ShitAmmount = ScriptableObjectHolder.Instance.GameConfiguration.MaxShitAmmountIncreasePerDay * CurrentDay;
+        LoadHouseScene();
         if (OnEndDay != null)
             OnEndDay();
     }
@@ -95,12 +97,14 @@ public class GameManager : Singleton<GameManager>
 
     private IEnumerator StartDay()
     {
-        DateTime = new TimeSpan(CurrentDay++, 9, 0, 0);
-        int count = 60 * 8; // 60 minutes times 8 hours
+        CurrentDay++;
+        CurrentHour = 9;
+        int count = 8;
         while (count-- > 0)
         {
-            yield return new WaitForSeconds(1f); //every seconds represents on minute in game
-            DateTime += new TimeSpan(0, 0, 1, 0);
+            yield return new WaitForSeconds(30);
+            CurrentHour++;
+            Debug.Log("HOUR");
             if (OnUpdateTime != null)
                 OnUpdateTime();
         }
@@ -113,11 +117,10 @@ public class GameManager : Singleton<GameManager>
 
     public void GoToWork()
     {
-        StartDay();
-        LoadWorkScene();
+        LoadWorkScene(StartNewDay);
     }
 
-    public void LoadWorkScene()
+    public void LoadWorkScene(Action callback)
     {
         DOTween.ToAlpha(() => BackgroundFade.color, (color) =>
         {
@@ -129,6 +132,9 @@ public class GameManager : Singleton<GameManager>
             DOTween.ToAlpha(() => BackgroundFade.color, (color) =>
             {
                 BackgroundFade.color = color;
+
+                if (callback != null)
+                    callback();
             }, 0f, .5f);
         });
     }
@@ -153,7 +159,7 @@ public class GameManager : Singleton<GameManager>
 
     #region Shitters
 
-    public List<Shitter> GetShittersForToday()
+    public Queue<Shitter> GetShittersForToday()
     {
         var gameConfiguration = ScriptableObjectHolder.Instance.GameConfiguration;
 
@@ -163,10 +169,10 @@ public class GameManager : Singleton<GameManager>
 
         int quantityToReturn = (int)Mathf.Ceil(gameConfiguration.ShittersPerDay + (gameConfiguration.ShittersPerDayIncrease*CurrentDay));
 
-        var result = new List<Shitter>(quantityToReturn);
+        var result = new Queue<Shitter>(quantityToReturn);
         for (int i = 0; i < quantityToReturn; i++)
         {
-            result.Add(AllTimeShitters[Random.Range(0, AllTimeShitters.Count)]);
+            result.Enqueue(AllTimeShitters[Random.Range(0, AllTimeShitters.Count)]);
         }
 
         return result;

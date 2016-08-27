@@ -1,11 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class ShitterFactory
 {
     public List<Shitter> GenerateShitters(int quantity)
     {
         var result = new List<Shitter>(quantity);
+
+        var images = Resources.LoadAll<Sprite>("Textures");
+        var socialPositionValues = Enum.GetValues(typeof (SocialPosition));
 
         for (int i = 0; i < quantity; i++)
         {
@@ -17,8 +22,10 @@ public class ShitterFactory
             shitter.Name = name;
             shitter.Story = story;
             shitter.ShitAmmount = Random.Range(1, 30);
+            shitter.TextureShitter = images[Random.Range(0, images.Length)];
+            shitter.SocialPosition = (SocialPosition)socialPositionValues.GetValue(Random.Range(0, socialPositionValues.Length));
 
-            Debug.Log(shitter);
+            result.Add(shitter);
         }
 
         return result;

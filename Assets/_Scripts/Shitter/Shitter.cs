@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using Random = UnityEngine.Random;
 
 [Serializable]
 public class Shitter
@@ -13,6 +14,8 @@ public class Shitter
     public string Name;
     public string Story;
     public int ShitAmmount;
+    public Sprite TextureShitter;
+    public SocialPosition SocialPosition;
 
     public readonly Dictionary<int, bool> AllTimeDecisions = new Dictionary<int, bool>();
 
@@ -21,8 +24,6 @@ public class Shitter
         get { return ShitAmmount * 0.5f; }
     }
 
-    public SocialPosition SocialPosition;
-
     public Shitter()
     {
         Id = _currentShitterId++;
@@ -30,19 +31,31 @@ public class Shitter
 
     public string GetMessageForPlayer()
     {
-        return string.Empty;
+        var gameDatabase = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject;
+        string message;
+        if (AllTimeDecisions.ContainsKey(GameManager.Instance.CurrentDay))
+        {
+            message = gameDatabase.TwiceADayMessages[Random.Range(0, gameDatabase.TwiceADayMessages.Count)];
+        }
+        else
+        {
+            message = gameDatabase.Stories[Random.Range(0, gameDatabase.Stories.Count)];
+        }
+        return message;
     }
 
     public string Accepted()
     {
         AllTimeDecisions[GameManager.Instance.CurrentDay] = true;
-        return string.Empty;
+        var gameDatabase = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject;
+        return gameDatabase.AcceptedReplies[Random.Range(0, gameDatabase.AcceptedReplies.Count)];
     }
 
     public string Denied()
     {
         AllTimeDecisions[GameManager.Instance.CurrentDay] = false;
-        return string.Empty;
+        var gameDatabase = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject;
+        return gameDatabase.DenyedReplies[Random.Range(0, gameDatabase.DenyedReplies.Count)];
     }
 
 }

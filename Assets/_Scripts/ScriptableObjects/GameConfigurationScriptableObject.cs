@@ -4,7 +4,7 @@ using System.Collections;
 public class GameConfigurationScriptableObject : ScriptableObject
 {
     public float MaxShitAmmount;
-    public float MaxShitAmmountDecreasePerDay;
+    public float MaxShitAmmountIncreasePerDay;
     public int ShittersToGeneratePerDay;
     public float ShittersPerDay;
     public float ShittersPerDayIncrease;

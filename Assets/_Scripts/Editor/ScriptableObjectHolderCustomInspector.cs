@@ -13,8 +13,8 @@ public class ScriptableObjectHolderCustomInspector : Editor
         {
             scriptableObjectHolder.GameDatabaseScriptableObject = Resources.FindObjectsOfTypeAll<GameDatabaseScriptableObject>()[0];
             scriptableObjectHolder.GameConfiguration = Resources.FindObjectsOfTypeAll<GameConfigurationScriptableObject>()[0];
+            scriptableObjectHolder.ShitterTextures = Resources.FindObjectsOfTypeAll<Texture>();
         }
-
         EditorUtility.SetDirty(target);
     }
 }
