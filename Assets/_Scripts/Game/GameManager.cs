@@ -119,7 +119,7 @@ public class GameManager : Singleton<GameManager>
         int count = 8;
         while (count-- > 0)
         {
-            yield return new WaitForSeconds(22.5f);
+            yield return new WaitForSeconds(22.5f + ((CurrentDay * ScriptableObjectHolder.Instance.GameConfiguration.ShittersPerDayIncrease) * 2));
             CurrentHour++;
         }
         EndDay();
