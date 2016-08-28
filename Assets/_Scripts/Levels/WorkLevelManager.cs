@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Random = UnityEngine.Random;
 
 public class WorkLevelManager : MonoBehaviour
 {
@@ -10,6 +12,8 @@ public class WorkLevelManager : MonoBehaviour
     private Queue<Shitter> _shitters;
     private bool _dayGoing = true;
     private Shitter _currentShitter = null;
+
+    #region Unity events
 
     void Awake()
     {
@@ -34,11 +38,19 @@ public class WorkLevelManager : MonoBehaviour
         CoroutineHelper.Instance.WaitForSecondsAndCall(1f, UpdateQueue);
     }
 
+    #endregion
+
+    #region Game events
+
     void EndDay()
     {
         GameManager.Instance.OnEndDay -= EndDay;
-        GameManager.Instance.LoadHouseScene();
+
+        if (_dayGoing)
+            GameManager.Instance.EndGame(EndOptions.ShitterInTheQueue);
+
         _dayGoing = false;
+        GameManager.Instance.LoadHouseScene();
     }
 
     public void ShitterArrive(Shitter shitter)
@@ -80,21 +92,67 @@ public class WorkLevelManager : MonoBehaviour
         ShitterArrive(_shitters.Dequeue());
     }
 
+    #endregion
+
+    #region callbacks
+
     private void OnShitterAccepted()
     {
         string message = _currentShitter.Accepted();
-        WorkGuiManager.ShowMessage(_currentShitter, message, () =>
+
+        var possibleMessagesForAccept = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.PlayerAcceptReplies.Find(d => d.SocialPosition == _currentShitter.SocialPosition);
+        var dialog = possibleMessagesForAccept.Dialogs[Random.Range(0, possibleMessagesForAccept.Dialogs.Count)];
+        WorkGuiManager.ShowMessage(_currentShitter, Shitter.DialogByDialogId[dialog], () =>
         {
-            StartCoroutine(ShitterShiting(_currentShitter));
+            WorkGuiManager.ShowMessage(_currentShitter, message, () =>
+            {
+                StartCoroutine(ShitterShiting(_currentShitter));
+            });
         });
     }
 
     private void OnShitterDenied()
     {
         string message = _currentShitter.Denied();
-        WorkGuiManager.ShowMessage(_currentShitter, message, () =>
+
+        Action callback = () =>
         {
             ShitterLeave(true);
+        };
+
+        if (_currentShitter.SocialPosition == SocialPosition.Royalty)
+        {
+            callback = () =>
+            {
+                GameManager.Instance.EndGame(EndOptions.DenyRoialty);
+            };
+        }
+        else if (_currentShitter.SocialPosition == SocialPosition.Cleric)
+        {
+            if (GameManager.Instance.CanDenyCleric)
+            {
+                GameManager.Instance.ClericDenyed++;
+            }
+            else
+            {
+                callback = () =>
+                {
+                    GameManager.Instance.EndGame(EndOptions.DenyRoialty);
+                };
+            }
+        }
+
+        var possibleMessagesForDeny = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.PlayerDeniesReplies.Find(d => d.SocialPosition == _currentShitter.SocialPosition);
+        var dialog = possibleMessagesForDeny.Dialogs[Random.Range(0, possibleMessagesForDeny.Dialogs.Count)];
+        WorkGuiManager.ShowMessage(_currentShitter, Shitter.DialogByDialogId[dialog], () =>
+        {
+            WorkGuiManager.ShowMessage(_currentShitter, message, () =>
+            {
+                callback();
+            });
         });
     }
+
+    #endregion
+
 }

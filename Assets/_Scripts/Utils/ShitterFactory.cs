@@ -17,10 +17,8 @@ public class ShitterFactory
             var shitter = new Shitter();
 
             var name = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.Names[Random.Range(0, ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.Names.Count)];
-            var story = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.Stories[Random.Range(0, ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.Stories.Count)];
 
             shitter.Name = name;
-            shitter.Story = story;
             shitter.ShitAmmount = Random.Range(5, (int)ScriptableObjectHolder.Instance.GameConfiguration.MaxShitPerShitter);
             shitter.SpriteShitter = images[i % images.Length];
             shitter.SocialPosition = (SocialPosition)socialPositionValues.GetValue(Random.Range(0, socialPositionValues.Length));

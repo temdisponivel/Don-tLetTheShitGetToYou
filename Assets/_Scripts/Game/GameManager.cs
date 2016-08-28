@@ -25,7 +25,7 @@ public class GameManager : Singleton<GameManager>
 
             if (_shitAmmount >= ScriptableObjectHolder.Instance.GameConfiguration.MaxShitAmmount)
             {
-                Lose();
+                EndGame(EndOptions.ShitOverflow);
                 return;
             }
 
@@ -62,14 +62,43 @@ public class GameManager : Singleton<GameManager>
 
     public List<Shitter> TodaysShitters;
 
+    public bool GameEnded = false;
+    public EndOptions End = EndOptions.Win;
+
+    public bool CanDenyCleric
+    {
+        get { return ClericDenyed <= 3; }
+    }
+    
+    public int ClericDenyed = 0;
+
+    private int _threatCount;
+    public int ThreatCount
+    {
+        get
+        {
+            return _threatCount;
+        }
+        set
+        {
+            _threatCount = value;
+
+            if (_threatCount >= 2)
+            {
+                EndGame(EndOptions.Killed);
+            }
+        }
+    }
+
+    public bool ClericMessageShowed { get; set; }
+
     #endregion
 
     #region Events
 
     public event Action OnStartNewDay;
     public event Action OnEndDay;
-    public event Action OnWin;
-    public event Action OnLose;
+    public event Action OnEnd;
     public event Action OnUpdateTime;
     public event Action OnShitAmmountChanges;
 
@@ -77,18 +106,14 @@ public class GameManager : Singleton<GameManager>
 
     #region End game
 
-    public void Win()
+    public void EndGame(EndOptions end)
     {
-        if (OnWin != null)
-            OnWin();
+        End = end;
+        GameEnded = true;
+        if (OnEnd != null)
+            OnEnd();
     }
-
-    public void Lose()
-    {
-        if (OnLose != null)
-            OnLose();
-    }
-
+    
     #endregion
 
     #region Days
@@ -103,7 +128,6 @@ public class GameManager : Singleton<GameManager>
     public void EndDay()
     {
         ShitAmmount = ScriptableObjectHolder.Instance.GameConfiguration.MaxShitAmmountIncreasePerDay * CurrentDay;
-        LoadHouseScene();
         if (OnEndDay != null)
             OnEndDay();
     }
@@ -162,6 +186,22 @@ public class GameManager : Singleton<GameManager>
         }, 1f, .5f).OnComplete(() =>
         {
             SceneManager.LoadScene("House");
+
+            DOTween.ToAlpha(() => BackgroundFade.color, (color) =>
+            {
+                BackgroundFade.color = color;
+            }, 0f, .5f);
+        });
+    }
+
+    public void LoadTitleScene()
+    {
+        DOTween.ToAlpha(() => BackgroundFade.color, (color) =>
+        {
+            BackgroundFade.color = color;
+        }, 1f, .5f).OnComplete(() =>
+        {
+            SceneManager.LoadScene("Title");
 
             DOTween.ToAlpha(() => BackgroundFade.color, (color) =>
             {

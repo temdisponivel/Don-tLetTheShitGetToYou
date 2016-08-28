@@ -123,11 +123,6 @@ public class WorkGuiManager : MonoBehaviour
         AcceptButton.interactable = enable;
         DenyButton.interactable = enable;
     }
-
-    private void SetCurrentShitterItem(Shitter shitter)
-    {
-        
-    }
-
+    
     #endregion
 }

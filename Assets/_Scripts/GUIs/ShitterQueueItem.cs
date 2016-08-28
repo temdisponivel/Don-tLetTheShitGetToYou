@@ -29,6 +29,8 @@ public class ShitterQueueItem : MonoBehaviour
         SocialPosition.sprite = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.SpriteBySocialPosition.Find(t => t.SocialPosition == shitter.SocialPosition).Sprite;
     }
 
+    #region Fade
+
     public void FadeOut()
     {
         DOTween.ToAlpha(() => ShitterImage.color, (color) =>
@@ -83,6 +85,8 @@ public class ShitterQueueItem : MonoBehaviour
             }, 1f, .5f);
         }
     }
+
+    #endregion
 
     private IEnumerator SetName()
     {

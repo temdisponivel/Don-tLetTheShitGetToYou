@@ -12,12 +12,69 @@ public class Shitter
 
     public int Id;
     public string Name;
-    public string Story;
     public int ShitAmmount;
     public Sprite SpriteShitter;
     public SocialPosition SocialPosition;
 
-    public readonly Dictionary<int, bool> AllTimeDecisions = new Dictionary<int, bool>();
+    private DialogId LastDialogId;
+
+    #region Static members
+    
+    public static Dictionary<SocialPosition, List<ShitterDialogs>> StoriesBySocialPosition { get; private set; }
+    public static Dictionary<DialogId, string> DialogByDialogId { get; private set; }
+    public static Dictionary<DialogId, DialogReplyTuple> DialogReplyById { get; private set; }
+
+    #region Bake
+
+    public static void BakeDialogs()
+    {
+        BakeDialogBySocialPosition();
+        BakeDialogById();
+        BakeDialogreplyById();
+    }
+
+    private static void BakeDialogBySocialPosition()
+    {
+        StoriesBySocialPosition = new Dictionary<SocialPosition, List<ShitterDialogs>>();
+
+        var allStories = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.ShitterDialogs;
+
+        for (int i = 0; i < allStories.Count; i++)
+        {
+            if (!StoriesBySocialPosition.ContainsKey(allStories[i].SocialPosition))
+                StoriesBySocialPosition[allStories[i].SocialPosition] = new List<ShitterDialogs>();
+
+            StoriesBySocialPosition[allStories[i].SocialPosition].Add(allStories[i]);
+        }
+    }
+
+    private static void BakeDialogById()
+    {
+        DialogByDialogId = new Dictionary<DialogId, string>();
+
+        var allDialogs = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.AllDialogs;
+
+        for (int i = 0; i < allDialogs.Count; i++)
+        {
+            DialogByDialogId[(DialogId)Enum.Parse(typeof(DialogId), allDialogs[i].Id)] = allDialogs[i].Dialog;
+        }
+    }
+
+    private static void BakeDialogreplyById()
+    {
+        DialogReplyById = new Dictionary<DialogId, DialogReplyTuple>();
+
+        var allDialogsReplies = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.Replies;
+
+        for (int i = 0; i < allDialogsReplies.Count; i++)
+        {
+            DialogReplyById[allDialogsReplies[i].Dialog] = allDialogsReplies[i];
+        }
+    }
+
+    #endregion
+
+    #endregion
 
     public float TimeShitting
     {
@@ -29,33 +86,31 @@ public class Shitter
         Id = _currentShitterId++;
     }
 
+    #region Messages
+
     public string GetMessageForPlayer()
     {
-        var gameDatabase = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject;
-        string message;
-        if (AllTimeDecisions.ContainsKey(GameManager.Instance.CurrentDay))
-        {
-            message = gameDatabase.TwiceADayMessages[Random.Range(0, gameDatabase.TwiceADayMessages.Count)];
-        }
-        else
-        {
-            message = gameDatabase.Stories[Random.Range(0, gameDatabase.Stories.Count)];
-        }
-        return message;
+        var messagesOfMySocialPosition = StoriesBySocialPosition[SocialPosition];
+        var possibleDialogs = messagesOfMySocialPosition[Random.Range(0, messagesOfMySocialPosition.Count)];
+        var dialog = possibleDialogs.Dialogs[Random.Range(0, possibleDialogs.Dialogs.Count)];
+        LastDialogId = dialog;
+        return DialogByDialogId[LastDialogId];
     }
 
     public string Accepted()
     {
-        AllTimeDecisions[GameManager.Instance.CurrentDay] = true;
-        var gameDatabase = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject;
-        return gameDatabase.AcceptedReplies[Random.Range(0, gameDatabase.AcceptedReplies.Count)];
+        var dialogReply = DialogReplyById[LastDialogId];
+        return DialogByDialogId[dialogReply.AcceptDialog];
+
     }
 
     public string Denied()
     {
-        AllTimeDecisions[GameManager.Instance.CurrentDay] = false;
-        var gameDatabase = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject;
-        return gameDatabase.DenyedReplies[Random.Range(0, gameDatabase.DenyedReplies.Count)];
+        var dialogReply = DialogReplyById[LastDialogId];
+        if (dialogReply.ThreatIfDenyed)
+            GameManager.Instance.ThreatCount++;
+        return DialogByDialogId[dialogReply.DenyDialog];
     }
 
+    #endregion
 }
