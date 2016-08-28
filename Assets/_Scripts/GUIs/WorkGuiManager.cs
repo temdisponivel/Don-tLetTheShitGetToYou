@@ -40,12 +40,14 @@ public class WorkGuiManager : MonoBehaviour
 
     public void AcceptCallback()
     {
+        SetButtons(false);
         if (OnAccept != null)
             OnAccept();
     }
 
     public void DenyCallback()
     {
+        SetButtons(false);
         if (OnDeny != null)
             OnDeny();
     }
@@ -80,7 +82,6 @@ public class WorkGuiManager : MonoBehaviour
         CurrentShitterItem.FadeOut();
         TextName.text = string.Empty;
         TextMessage.text = string.Empty;
-        SetButtons(false);
     }
 
     #endregion

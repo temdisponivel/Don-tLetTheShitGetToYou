@@ -23,11 +23,11 @@ public class HouseGuiManager : MonoBehaviour
     {
         if (GameManager.Instance.GameEnded)
         {
-            GameManager.Instance.GoToWork();
+            GameManager.Instance.LoadTitleScene();
         }
         else
         {
-            GameManager.Instance.LoadTitleScene();
+            GameManager.Instance.GoToWork();
         }
     }
 

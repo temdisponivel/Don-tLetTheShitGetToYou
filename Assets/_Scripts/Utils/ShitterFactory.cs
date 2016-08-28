@@ -10,7 +10,7 @@ public class ShitterFactory
         var result = new List<Shitter>(quantity);
 
         var images = Resources.LoadAll<Sprite>("Textures");
-        var socialPositionValues = new List<SocialPosition>(Enum.GetValues(typeof (SocialPosition)) as SocialPosition[]);
+        var socialPositionValues = new List<SocialPosition>(Enum.GetValues(typeof(SocialPosition)) as SocialPosition[]);
 
         var toAdd = new List<SocialPosition>();
         for (int i = 0; i < socialPositionValues.Count; i++)
@@ -24,6 +24,7 @@ public class ShitterFactory
 
         socialPositionValues.AddRange(toAdd);
 
+        var maxShit = ScriptableObjectHolder.Instance.GameConfiguration.MaxShitAmmount / (quantity * 1f);
         for (int i = 0; i < quantity; i++)
         {
             var shitter = new Shitter();
@@ -31,7 +32,7 @@ public class ShitterFactory
             var name = ScriptableObjectHolder.Instance.GameDatabase.Names[Random.Range(0, ScriptableObjectHolder.Instance.GameDatabase.Names.Count)];
 
             shitter.Name = name;
-            shitter.ShitAmmount = Random.Range(5, (int)ScriptableObjectHolder.Instance.GameConfiguration.MaxShitPerShitter);
+            shitter.ShitAmmount = Random.Range(.5f, maxShit);
             shitter.SpriteShitter = images[i % images.Length];
             shitter.SocialPosition = socialPositionValues[Random.Range(0, socialPositionValues.Count)];
 

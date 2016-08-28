@@ -8,8 +8,6 @@ public class ClockManager : MonoBehaviour
     private Vector3 _initialAngle;
     public Color TargetColorEndOfDay;
 
-    const float anglesPerHour = 180 / 8f; //180 angles in 8 hours
-
     void Start()
     {
         this.gameObject.transform.parent.gameObject.SetActive(false);
@@ -32,8 +30,10 @@ public class ClockManager : MonoBehaviour
 
     private void UpdateClock()
     {
+        var hoursPerDay = (ScriptableObjectHolder.Instance.GameConfiguration.HoursPerDay*1.0f);
+        float anglesPerHour = 180 / hoursPerDay; //180 angles in 8 hours
         this.transform.rotation = Quaternion.Euler(0, 0, _initialAngle.z + (-anglesPerHour * (GameManager.Instance.CurrentHour - 9)));
-        var targetColor = Color.Lerp(Camera.main.backgroundColor, TargetColorEndOfDay, (1 / 8f) * (GameManager.Instance.CurrentHour - 9));
+        var targetColor = Color.Lerp(Camera.main.backgroundColor, TargetColorEndOfDay, (1 / hoursPerDay) * (GameManager.Instance.CurrentHour - 9));
         DOTween.To(() => Camera.main.backgroundColor, (color) =>
                 {
                     Camera.main.backgroundColor = color;

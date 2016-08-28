@@ -12,7 +12,7 @@ public class Shitter
 
     public int Id;
     public string Name;
-    public int ShitAmmount;
+    public float ShitAmmount;
     public Sprite SpriteShitter;
     public SocialPosition SocialPosition;
 
@@ -78,7 +78,7 @@ public class Shitter
 
     public float TimeShitting
     {
-        get { return ShitAmmount * 0.5f; }
+        get { return ShitAmmount * Random.Range(.7f, 1.2f); }
     }
 
     public Shitter()

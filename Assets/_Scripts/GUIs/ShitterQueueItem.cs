@@ -23,7 +23,8 @@ public class ShitterQueueItem : MonoBehaviour
 
         ShitterImage.sprite = shitter.SpriteShitter;
 
-        var scaleValue = shitter.ShitAmmount / ScriptableObjectHolder.Instance.GameConfiguration.MaxShitPerShitter;
+        var scaleValue = shitter.ShitAmmount / (ScriptableObjectHolder.Instance.GameConfiguration.MaxShitAmmount / (GameManager.Instance.TodaysShitters.Count * 1f));
+        scaleValue = Mathf.Min(scaleValue, 1f);
         ImageShitAmmount.transform.localScale = new Vector3(scaleValue, scaleValue, 1f);
 
         SocialPosition.sprite = ScriptableObjectHolder.Instance.GameDatabase.SpriteBySocialPosition.Find(t => t.SocialPosition == shitter.SocialPosition).Sprite;

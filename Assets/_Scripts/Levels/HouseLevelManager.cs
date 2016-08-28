@@ -13,11 +13,16 @@ public class HouseLevelManager : MonoBehaviour
 
     void Start()
     {
-#if UNITY_EDITOR
-        string messageOfTheDay = string.Format(ScriptableObjectHolder.Instance.GameDatabase.InitialMessage, ScriptableObjectHolder.Instance.GameConfiguration.EndGameDay);
-        HouseGuiManager.ShowMessage(messageOfTheDay, ShowMessageOfTheDay);
-#endif
-        ShowMessageOfTheDay();
+        if (GameManager.Instance.ShownInitialMessage)
+        {
+            ShowMessageOfTheDay();
+        }
+        else
+        {
+            string messageOfTheDay = string.Format(ScriptableObjectHolder.Instance.GameDatabase.InitialMessage,
+                ScriptableObjectHolder.Instance.GameConfiguration.EndGameDay);
+            HouseGuiManager.ShowMessage(messageOfTheDay, ShowMessageOfTheDay);
+        }
     }
 
     private void ShowMessageOfTheDay()

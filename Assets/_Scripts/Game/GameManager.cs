@@ -58,7 +58,7 @@ public class GameManager : Singleton<GameManager>
 
     public ShitterFactory ShitterFactory = new ShitterFactory();
 
-    public bool ShownInitialMessage { get; set; }
+    public bool ShownInitialMessage;
 
     public List<Shitter> TodaysShitters;
 
@@ -108,7 +108,7 @@ public class GameManager : Singleton<GameManager>
 
     void Start()
     {
-        CurrentDay = 15;
+        CurrentDay = 1;
         Shitter.BakeDialogs();
     }
 
@@ -155,10 +155,19 @@ public class GameManager : Singleton<GameManager>
     {
         CurrentDay++;
         CurrentHour = 9;
-        int count = 8;
+        int count = ScriptableObjectHolder.Instance.GameConfiguration.HoursPerDay;
+        var timeToWait = 0f;
+
+        for (int i = 0; i < TodaysShitters.Count; i++)
+        {
+            timeToWait += TodaysShitters[i].TimeShitting + Random.Range(1, 5); //random to account for dialogs
+        }
+
+        timeToWait /= ScriptableObjectHolder.Instance.GameConfiguration.HoursPerDay;
+
         while (count-- > 0)
         {
-            yield return new WaitForSeconds(CurrentDay * ScriptableObjectHolder.Instance.GameConfiguration.ShittersPerDayIncrease);
+            yield return new WaitForSeconds(timeToWait);
             CurrentHour++;
         }
         EndDay();
@@ -237,8 +246,8 @@ public class GameManager : Singleton<GameManager>
         var newShitters = ShitterFactory.GenerateShitters(quantityToGenerate);
         AllTimeShitters.AddRange(newShitters);
 
-        int quantityToReturn = (int)Mathf.Ceil(gameConfiguration.ShittersPerDay + (gameConfiguration.ShittersPerDayIncrease * CurrentDay));
-
+        int quantityToReturn = (int)Mathf.Ceil(gameConfiguration.ShittersPerDayIncrease * CurrentDay);
+        
         var result = new List<Shitter>(quantityToReturn);
         for (int i = 0; i < quantityToReturn; i++)
         {
