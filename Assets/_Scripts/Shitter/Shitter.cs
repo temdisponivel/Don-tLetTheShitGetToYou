@@ -37,7 +37,7 @@ public class Shitter
     {
         StoriesBySocialPosition = new Dictionary<SocialPosition, List<ShitterDialogs>>();
 
-        var allStories = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.ShitterDialogs;
+        var allStories = ScriptableObjectHolder.Instance.GameDatabase.ShitterDialogs;
 
         for (int i = 0; i < allStories.Count; i++)
         {
@@ -52,7 +52,7 @@ public class Shitter
     {
         DialogByDialogId = new Dictionary<DialogId, string>();
 
-        var allDialogs = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.AllDialogs;
+        var allDialogs = ScriptableObjectHolder.Instance.GameDatabase.AllDialogs;
 
         for (int i = 0; i < allDialogs.Count; i++)
         {
@@ -64,7 +64,7 @@ public class Shitter
     {
         DialogReplyById = new Dictionary<DialogId, DialogReplyTuple>();
 
-        var allDialogsReplies = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.Replies;
+        var allDialogsReplies = ScriptableObjectHolder.Instance.GameDatabase.Replies;
 
         for (int i = 0; i < allDialogsReplies.Count; i++)
         {

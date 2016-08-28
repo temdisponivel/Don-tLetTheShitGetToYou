@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ScriptableObjectHolder : Singleton<ScriptableObjectHolder>
 {
-    public GameDatabaseScriptableObject GameDatabaseScriptableObject;
+    public GameDatabaseScriptableObject GameDatabase;
     public GameConfigurationScriptableObject GameConfiguration;
     public Texture[] ShitterTextures;
 }

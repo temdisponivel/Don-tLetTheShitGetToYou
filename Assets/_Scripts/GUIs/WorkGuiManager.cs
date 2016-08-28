@@ -15,6 +15,8 @@ public class WorkGuiManager : MonoBehaviour
     public Image ShitCounter;
     public Image ImageShitter;
 
+    public Color ColorForPlayerMessage;
+
     public event Action OnAccept;
     public event Action OnDeny;
 
@@ -24,6 +26,7 @@ public class WorkGuiManager : MonoBehaviour
     {
         GameManager.Instance.OnShitAmmountChanges += UpdateShitCounter;
         CurrentShitterItem.FadeOut();
+        UpdateShitCounter();
     }
 
     void OnDestroy()
@@ -86,10 +89,10 @@ public class WorkGuiManager : MonoBehaviour
 
     public void AskPermition(Shitter shitter)
     {
-        StartCoroutine(InnerPlayeMessage(shitter, shitter.GetMessageForPlayer(), () =>
+        InnerPlayeMessage(shitter, shitter.GetMessageForPlayer(), () =>
         {
             SetButtons(true);
-        }));
+        });
     }
 
     public void UpdateShitCounter()
@@ -97,25 +100,30 @@ public class WorkGuiManager : MonoBehaviour
         ShitCounter.fillAmount = GameManager.Instance.ShitAmmount / ScriptableObjectHolder.Instance.GameConfiguration.MaxShitAmmount;
     }
 
-    public void ShowMessage(Shitter shitter, string message, Action callback)
+    public void ShowMessage(Shitter shitter, string message, Action callback, bool fromPlayer = false)
     {
-        StartCoroutine(InnerPlayeMessage(shitter, message, callback));
+        Color cached = TextMessage.color;
+        if (fromPlayer)
+        {
+            TextMessage.color = ColorForPlayerMessage;
+        }
+        InnerPlayeMessage(shitter, message, () =>
+        {
+            if (fromPlayer)
+                TextMessage.color = cached;
+
+            if (callback != null)
+                callback();
+        });
     }
 
-    private IEnumerator InnerPlayeMessage(Shitter shitter, string message, Action callback)
+    private void InnerPlayeMessage(Shitter shitter, string message, Action callback)
     {
         TextMessage.text = string.Empty;
-        
-        StringBuilder messageBuilder = new StringBuilder(message.Length);
-        for (int i = 0; i < message.Length; i++)
+        StartCoroutine(CoroutineHelper.Instance.ShowText(message, (text) =>
         {
-            messageBuilder.Append(message[i]);
-            TextMessage.text = messageBuilder.ToString();
-            yield return new WaitForSeconds(.1f);
-        }
-
-        if (callback != null)
-            callback();
+            TextMessage.text = text;
+        }, callback));
     }
 
     private void SetButtons(bool enable)

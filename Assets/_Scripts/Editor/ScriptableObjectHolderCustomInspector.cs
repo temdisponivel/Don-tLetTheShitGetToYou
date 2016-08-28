@@ -11,7 +11,7 @@ public class ScriptableObjectHolderCustomInspector : Editor
 
         if (GUILayout.Button("Bake references"))
         {
-            scriptableObjectHolder.GameDatabaseScriptableObject = Resources.FindObjectsOfTypeAll<GameDatabaseScriptableObject>()[0];
+            scriptableObjectHolder.GameDatabase = Resources.FindObjectsOfTypeAll<GameDatabaseScriptableObject>()[0];
             scriptableObjectHolder.GameConfiguration = Resources.FindObjectsOfTypeAll<GameConfigurationScriptableObject>()[0];
             scriptableObjectHolder.ShitterTextures = Resources.FindObjectsOfTypeAll<Texture>();
         }

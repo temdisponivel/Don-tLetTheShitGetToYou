@@ -10,37 +10,45 @@ public class HouseGuiManager : MonoBehaviour
     public Button GoToWorkButton;
     public Text TextMessage;
 
-    public void OnGoToWork()
+    void Start()
     {
-        GameManager.Instance.GoToWork();
+        if (GameManager.Instance.GameEnded)
+        {
+            GameManager.Instance.Reset();
+            GoToWorkButton.GetComponentInChildren<Text>().text = "Restart";
+        }
     }
 
-    public void ShowMenssageOfTheDay(string message)
+    public void OnGoToWork()
     {
-        StartCoroutine(InnerPlayeMessage(message, () =>
+        if (GameManager.Instance.GameEnded)
+        {
+            GameManager.Instance.GoToWork();
+        }
+        else
+        {
+            GameManager.Instance.LoadTitleScene();
+        }
+    }
+
+    public void ShowMessageOfTheDay(string message)
+    {
+        InnerPlayeMessage(message, () =>
         {
             GoToWorkButton.transform.DOScale(Vector3.one, .3f);
-        }));
+        });
     }
 
     public void ShowMessage(string message, Action callback)
     {
-        StartCoroutine(InnerPlayeMessage(message, callback));
+        InnerPlayeMessage(message, callback);
     }
 
-    private IEnumerator InnerPlayeMessage(string message, Action callback)
+    private void InnerPlayeMessage(string message, Action callback)
     {
-        StringBuilder messageBuilder = new StringBuilder(message.Length);
-        for (int i = 0; i < message.Length; i++)
+        StartCoroutine(CoroutineHelper.Instance.ShowText(message, (text) =>
         {
-            messageBuilder.Append(message[i]);
-            TextMessage.text = messageBuilder.ToString();
-            yield return new WaitForSeconds(.1f);
-        }
-
-        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
-
-        if (callback != null)
-            callback();
+            TextMessage.text = text;
+        }, callback, waitForClickToCallback: true));
     }
 }

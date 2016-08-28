@@ -13,9 +13,9 @@ public class HouseLevelManager : MonoBehaviour
 
     void Start()
     {
-#if !UNITY_EDITOR
-        string messageOfTheDay = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.InitialMessage;
-            HouseGuiManager.ShowMessage(messageOfTheDay, ShowMessageOfTheDay);
+#if UNITY_EDITOR
+        string messageOfTheDay = string.Format(ScriptableObjectHolder.Instance.GameDatabase.InitialMessage, ScriptableObjectHolder.Instance.GameConfiguration.EndGameDay);
+        HouseGuiManager.ShowMessage(messageOfTheDay, ShowMessageOfTheDay);
 #endif
         ShowMessageOfTheDay();
     }
@@ -24,32 +24,26 @@ public class HouseLevelManager : MonoBehaviour
     {
         if (GameManager.Instance.GameEnded)
         {
-            HouseGuiManager.ShowMessage(ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.MessageForEndGame.Find(m => m.EndOption == GameManager.Instance.End).Message,
-                () =>
-                {
-                    GameManager.Instance.LoadTitleScene();
-                });
-
+            HouseGuiManager.ShowMessageOfTheDay(ScriptableObjectHolder.Instance.GameDatabase.MessageForEndGame.Find(m => m.EndOption == GameManager.Instance.End).Message);
             return;
         }
 
         string messageOfTheDay;
+        var dataBase = ScriptableObjectHolder.Instance.GameDatabase;
         if (!GameManager.Instance.CanDenyCleric && !GameManager.Instance.ClericMessageShowed)
         {
-            messageOfTheDay = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.LetterFromCleric;
+            messageOfTheDay = dataBase.LetterFromCleric;
             GameManager.Instance.ClericMessageShowed = true;
         }
         else if (GameManager.Instance.ThreatCount > 0)
         {
-            messageOfTheDay = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.MessageForHouseThrashed;
+            messageOfTheDay = dataBase.MessageForHouseThrashed;
         }
         else
         {
-            messageOfTheDay =
-                ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.WakeupMessages[
-                    Random.Range(0, ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.WakeupMessages.Count)];
+            messageOfTheDay = dataBase.WakeupMessages[Random.Range(0, dataBase.WakeupMessages.Count)];
         }
 
-        HouseGuiManager.ShowMenssageOfTheDay(messageOfTheDay);
+        HouseGuiManager.ShowMessageOfTheDay(messageOfTheDay);
     }
 }

@@ -104,6 +104,16 @@ public class GameManager : Singleton<GameManager>
 
     #endregion
 
+    #region Unity events
+
+    void Start()
+    {
+        CurrentDay = 15;
+        Shitter.BakeDialogs();
+    }
+
+    #endregion
+
     #region End game
 
     public void EndGame(EndOptions end)
@@ -127,6 +137,11 @@ public class GameManager : Singleton<GameManager>
 
     public void EndDay()
     {
+        if (CurrentDay == ScriptableObjectHolder.Instance.GameConfiguration.EndGameDay)
+        {
+            EndGame(EndOptions.Win);
+        }
+
         ShitAmmount = ScriptableObjectHolder.Instance.GameConfiguration.MaxShitAmmountIncreasePerDay * CurrentDay;
         if (OnEndDay != null)
             OnEndDay();
@@ -143,7 +158,7 @@ public class GameManager : Singleton<GameManager>
         int count = 8;
         while (count-- > 0)
         {
-            yield return new WaitForSeconds(22.5f + ((CurrentDay * ScriptableObjectHolder.Instance.GameConfiguration.ShittersPerDayIncrease) * 2));
+            yield return new WaitForSeconds(CurrentDay * ScriptableObjectHolder.Instance.GameConfiguration.ShittersPerDayIncrease);
             CurrentHour++;
         }
         EndDay();
@@ -233,6 +248,15 @@ public class GameManager : Singleton<GameManager>
         TodaysShitters = result;
 
         return result;
+    }
+
+    #endregion
+
+    #region Reset
+
+    public void Reset()
+    {
+        
     }
 
     #endregion

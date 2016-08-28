@@ -26,7 +26,7 @@ public class ShitterQueueItem : MonoBehaviour
         var scaleValue = shitter.ShitAmmount / ScriptableObjectHolder.Instance.GameConfiguration.MaxShitPerShitter;
         ImageShitAmmount.transform.localScale = new Vector3(scaleValue, scaleValue, 1f);
 
-        SocialPosition.sprite = ScriptableObjectHolder.Instance.GameDatabaseScriptableObject.SpriteBySocialPosition.Find(t => t.SocialPosition == shitter.SocialPosition).Sprite;
+        SocialPosition.sprite = ScriptableObjectHolder.Instance.GameDatabase.SpriteBySocialPosition.Find(t => t.SocialPosition == shitter.SocialPosition).Sprite;
     }
 
     #region Fade
