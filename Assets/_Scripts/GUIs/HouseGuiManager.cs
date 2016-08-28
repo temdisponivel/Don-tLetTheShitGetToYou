@@ -31,10 +31,12 @@ public class HouseGuiManager : MonoBehaviour
         }
     }
 
-    public void ShowMessageOfTheDay(string message)
+    public void ShowMessageOfTheDay(string message, Action callback)
     {
         InnerPlayeMessage(message, () =>
         {
+            if (callback != null)
+                callback();
             GoToWorkButton.transform.DOScale(Vector3.one, .3f);
         });
     }

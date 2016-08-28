@@ -65,10 +65,26 @@ public class GameManager : Singleton<GameManager>
 
     public bool CanDenyCleric
     {
-        get { return ClericDenyed <= 3; }
+        get { return ClericDenyed <= 0; }
     }
-    
-    public int ClericDenyed = 0;
+
+    private int _clericDenyed;
+    public int ClericDenyed
+    {
+        get
+        {
+            return _clericDenyed;
+        }
+        set
+        {
+            _clericDenyed = value;
+
+            if (_clericDenyed >= 0)
+            {
+                EndGame(EndOptions.DenyCleric);
+            }
+        }
+    }
 
     private int _threatCount;
     public int ThreatCount

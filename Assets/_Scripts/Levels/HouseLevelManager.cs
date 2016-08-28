@@ -36,7 +36,8 @@ public class HouseLevelManager : MonoBehaviour
                 ScriptableObjectHolder.Instance.GameDatabase.MessageForEndGame.Find(
                     m => m.EndOption == GameManager.Instance.End).Message;
 
-            var timeToWait = messageForEnd.Length * .1f;
+            SoundManager.Instance.PlayAudio(AudioId.Horror);
+            AudioId sound = AudioId.Ambiance;
             switch (GameManager.Instance.End)
             {
                 case EndOptions.Win:
@@ -46,17 +47,21 @@ public class HouseLevelManager : MonoBehaviour
                     SoundManager.Instance.PlayAudio(AudioId.FartLong, AudioId.FartMedium, AudioId.FartShort);
                     break;
                 case EndOptions.Killed:
-                    StartCoroutine(PlaySoundWithHorror(AudioId.Stab, timeToWait));
+                    sound = AudioId.Stab;
                     break;
                 case EndOptions.DenyRoialty:
-                    StartCoroutine(PlaySoundWithHorror(AudioId.Hanging, timeToWait));
+                    sound = AudioId.Hanging;
                     break;
                 case EndOptions.DenyCleric:
-                    StartCoroutine(PlaySoundWithHorror(AudioId.Guillotine, timeToWait));
+                    sound = AudioId.Guillotine;
                     break;
             }
 
-            HouseGuiManager.ShowMessageOfTheDay(messageForEnd);
+            HouseGuiManager.ShowMessageOfTheDay(messageForEnd, () =>
+            {
+                SoundManager.Instance.Stop(AudioId.Horror);
+                SoundManager.Instance.PlayAudio(sound);
+            });
             return;
         }
 
@@ -79,14 +84,6 @@ public class HouseLevelManager : MonoBehaviour
             messageOfTheDay = dataBase.WakeupMessages[Random.Range(0, dataBase.WakeupMessages.Count)];
         }
 
-        HouseGuiManager.ShowMessageOfTheDay(messageOfTheDay);
-    }
-
-    private IEnumerator PlaySoundWithHorror(AudioId sound, float timeToWait)
-    {
-        SoundManager.Instance.PlayAudio(AudioId.Horror);
-        yield return new WaitForSeconds(timeToWait);
-        SoundManager.Instance.Stop(AudioId.Horror);
-        SoundManager.Instance.PlayAudio(sound);
+        HouseGuiManager.ShowMessageOfTheDay(messageOfTheDay, null);
     }
 }

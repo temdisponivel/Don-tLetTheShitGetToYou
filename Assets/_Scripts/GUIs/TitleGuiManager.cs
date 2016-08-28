@@ -14,6 +14,7 @@ public class TitleGuiManager : MonoBehaviour
 
     void Start()
     {
+        SoundManager.Instance.StopAll();
         SoundManager.Instance.PlayAudio(AudioId.Ambiance);
 
         StartCoroutine(CoroutineHelper.Instance.ShowText(ScriptableObjectHolder.Instance.GameDatabase.TitleMessage, (message) =>

@@ -57,7 +57,7 @@ public class WorkLevelManager : MonoBehaviour
     {
         GameManager.Instance.OnEndDay -= EndDay;
 
-        if (_shitters.Count > 0 && _dayGoing)
+        if (!GameManager.Instance.GameEnded && _shitters.Count > 0 && _dayGoing)
         {
             GameManager.Instance.EndGame(EndOptions.ShitterInTheQueue);
         }
