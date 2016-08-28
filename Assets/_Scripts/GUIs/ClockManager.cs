@@ -13,24 +13,17 @@ public class ClockManager : MonoBehaviour
         this.gameObject.transform.parent.gameObject.SetActive(false);
         _initialAngle = this.transform.rotation.eulerAngles;
 
-        SceneManager.sceneLoaded += (scene, mode) =>
-        {
-            if (scene.name == "Work")
-            {
-                this.gameObject.transform.parent.gameObject.SetActive(true);
-                GameManager.Instance.OnUpdateTime += UpdateClock;
-            }
-            else
-            {
-                this.gameObject.transform.parent.gameObject.SetActive(false);
-                GameManager.Instance.OnUpdateTime -= UpdateClock;
-            }
-        };
+        SceneManager.sceneLoaded += SceneChangeCallback;
+    }
+
+    void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= SceneChangeCallback;
     }
 
     private void UpdateClock()
     {
-        var hoursPerDay = (ScriptableObjectHolder.Instance.GameConfiguration.HoursPerDay*1.0f);
+        var hoursPerDay = (ScriptableObjectHolder.Instance.GameConfiguration.HoursPerDay * 1.0f);
         float anglesPerHour = 180 / hoursPerDay; //180 angles in 8 hours
         this.transform.rotation = Quaternion.Euler(0, 0, _initialAngle.z + (-anglesPerHour * (GameManager.Instance.CurrentHour - 9)));
         var targetColor = Color.Lerp(Camera.main.backgroundColor, TargetColorEndOfDay, (1 / hoursPerDay) * (GameManager.Instance.CurrentHour - 9));
@@ -38,5 +31,20 @@ public class ClockManager : MonoBehaviour
                 {
                     Camera.main.backgroundColor = color;
                 }, targetColor, .5f);
+    }
+
+    private void SceneChangeCallback(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Work")
+        {
+            this.gameObject.transform.parent.gameObject.SetActive(true);
+            UpdateClock();
+            GameManager.Instance.OnUpdateTime += UpdateClock;
+        }
+        else
+        {
+            this.gameObject.transform.parent.gameObject.SetActive(false);
+            GameManager.Instance.OnUpdateTime -= UpdateClock;
+        }
     }
 }

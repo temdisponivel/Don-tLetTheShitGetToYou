@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
+using Random = System.Random;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -54,8 +54,6 @@ public class GameManager : Singleton<GameManager>
 
     public Image BackgroundFade;
 
-    public readonly List<Shitter> AllTimeShitters = new List<Shitter>();
-
     public ShitterFactory ShitterFactory = new ShitterFactory();
 
     public bool ShownInitialMessage;
@@ -92,6 +90,8 @@ public class GameManager : Singleton<GameManager>
 
     public bool ClericMessageShowed { get; set; }
 
+    public Coroutine CurrentDayCoroutine;
+
     #endregion
 
     #region Events
@@ -108,7 +108,7 @@ public class GameManager : Singleton<GameManager>
 
     void Start()
     {
-        CurrentDay = 1;
+        CurrentDay = 0;
         Shitter.BakeDialogs();
     }
 
@@ -130,9 +130,12 @@ public class GameManager : Singleton<GameManager>
 
     public void StartNewDay()
     {
-        StartCoroutine(StartDay());
-        if (OnStartNewDay != null)
-            OnStartNewDay();
+        LoadWorkScene(() =>
+        {
+            CurrentDayCoroutine = StartCoroutine(StartDay());
+            if (OnStartNewDay != null)
+                OnStartNewDay();
+        });
     }
 
     public void EndDay()
@@ -141,6 +144,9 @@ public class GameManager : Singleton<GameManager>
         {
             EndGame(EndOptions.Win);
         }
+
+        if (CurrentDayCoroutine != null)
+            StopCoroutine(CurrentDayCoroutine);
 
         ShitAmmount = ScriptableObjectHolder.Instance.GameConfiguration.MaxShitAmmountIncreasePerDay * CurrentDay;
         if (OnEndDay != null)
@@ -157,10 +163,11 @@ public class GameManager : Singleton<GameManager>
         CurrentHour = 9;
         int count = ScriptableObjectHolder.Instance.GameConfiguration.HoursPerDay;
         var timeToWait = 0f;
-
+        var random = new Random();
+        TodaysShitters = GetShittersForToday();
         for (int i = 0; i < TodaysShitters.Count; i++)
         {
-            timeToWait += TodaysShitters[i].TimeShitting + Random.Range(5, 10); //random to account for dialogs
+            timeToWait += TodaysShitters[i].TimeShitting + (float)(5 + (random.NextDouble() * 10)); //random to account for dialogs
         }
 
         timeToWait /= count;
@@ -176,12 +183,7 @@ public class GameManager : Singleton<GameManager>
     #endregion
 
     #region Scenes
-
-    public void GoToWork()
-    {
-        LoadWorkScene(StartNewDay);
-    }
-
+    
     public void LoadWorkScene(Action callback)
     {
         DOTween.ToAlpha(() => BackgroundFade.color, (color) =>
@@ -238,25 +240,13 @@ public class GameManager : Singleton<GameManager>
 
     #region Shitters
 
-    public List<Shitter> GetShittersForToday()
+    private List<Shitter> GetShittersForToday()
     {
         var gameConfiguration = ScriptableObjectHolder.Instance.GameConfiguration;
-
-        int quantityToGenerate = (int)Mathf.Ceil(gameConfiguration.ShittersToGeneratePerDay * Random.Range(.7f, 1.3f));
-        var newShitters = ShitterFactory.GenerateShitters(quantityToGenerate);
-        AllTimeShitters.AddRange(newShitters);
-
-        int quantityToReturn = (int)Mathf.Ceil(gameConfiguration.ShittersPerDayIncrease * CurrentDay);
-        
-        var result = new List<Shitter>(quantityToReturn);
-        for (int i = 0; i < quantityToReturn; i++)
-        {
-            result.Add(AllTimeShitters[Random.Range(0, AllTimeShitters.Count)]);
-        }
-
-        TodaysShitters = result;
-
-        return result;
+        var random = new Random();
+        int quantityToReturn = gameConfiguration.ShittersPerDayIncrease * CurrentDay;
+        var maxShitAmmount = gameConfiguration.MaxShitAmmount /  (quantityToReturn * (float)(.85f + (random.NextDouble() * 1.3f)));
+        return ShitterFactory.GenerateShitters(quantityToReturn, maxShitAmmount);
     }
 
     #endregion

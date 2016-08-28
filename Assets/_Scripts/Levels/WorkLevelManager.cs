@@ -18,15 +18,18 @@ public class WorkLevelManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        GameManager.Instance.OnStartNewDay += StartDay;
         GameManager.Instance.OnEndDay += EndDay;
     }
 
-    void Start()
+    void StartDay()
     {
+        GameManager.Instance.OnStartNewDay -= StartDay;
+
         WorkGuiManager.OnAccept += OnShitterAccepted;
         WorkGuiManager.OnDeny += OnShitterDenied;
 
-        var shitters = GameManager.Instance.GetShittersForToday();
+        var shitters = GameManager.Instance.TodaysShitters;
         _shitters = new Queue<Shitter>();
 
         for (int i = 0; i < shitters.Count; i++)
@@ -55,7 +58,11 @@ public class WorkLevelManager : MonoBehaviour
         GameManager.Instance.OnEndDay -= EndDay;
 
         if (_shitters.Count > 0 && _dayGoing)
+        {
             GameManager.Instance.EndGame(EndOptions.ShitterInTheQueue);
+        }
+        else
+            GameManager.Instance.EndDay();
 
         _dayGoing = false;
         GameManager.Instance.LoadHouseScene();
@@ -165,8 +172,8 @@ public class WorkLevelManager : MonoBehaviour
 
     private void OnShitterDenied()
     {
-        string message = _currentShitter.Denied();
         SoundManager.Instance.PlayAudio(AudioId.Denyed);
+        string message = _currentShitter.Denied();
         Action callback = () =>
         {
             ShitterLeave(true);
@@ -190,7 +197,7 @@ public class WorkLevelManager : MonoBehaviour
             {
                 callback = () =>
                 {
-                    GameManager.Instance.EndGame(EndOptions.DenyRoialty);
+                    GameManager.Instance.EndGame(EndOptions.DenyCleric);
                     GameManager.Instance.LoadHouseScene();
                 };
             }

@@ -6,8 +6,7 @@ public class GameConfigurationScriptableObject : ScriptableObject
 {
     public float MaxShitAmmount;
     public float MaxShitAmmountIncreasePerDay;
-    public int ShittersToGeneratePerDay;
-    public float ShittersPerDayIncrease;
+    public int ShittersPerDayIncrease;
     public float MaxShitPerShitter;
     public int EndGameDay;
     public int HoursPerDay;

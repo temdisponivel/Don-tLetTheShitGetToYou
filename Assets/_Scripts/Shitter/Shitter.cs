@@ -109,8 +109,8 @@ public class Shitter
         var dialogReply = DialogReplyById[LastDialogId];
         if (dialogReply.ThreatIfDenyed)
         {
-            GameManager.Instance.ThreatCount++;
             SoundManager.Instance.PlayAudio(AudioId.Threat);
+            GameManager.Instance.ThreatCount++;
         }
         return DialogByDialogId[dialogReply.DenyDialog];
     }

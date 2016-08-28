@@ -14,7 +14,6 @@ public class HouseGuiManager : MonoBehaviour
     {
         if (GameManager.Instance.GameEnded)
         {
-            GameManager.Instance.Reset();
             GoToWorkButton.GetComponentInChildren<Text>().text = "Restart";
         }
     }
@@ -23,11 +22,12 @@ public class HouseGuiManager : MonoBehaviour
     {
         if (GameManager.Instance.GameEnded)
         {
+            GameManager.Instance.Reset();
             GameManager.Instance.LoadTitleScene();
         }
         else
         {
-            GameManager.Instance.GoToWork();
+            GameManager.Instance.StartNewDay();
         }
     }
 

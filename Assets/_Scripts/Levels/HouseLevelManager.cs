@@ -32,7 +32,11 @@ public class HouseLevelManager : MonoBehaviour
         if (GameManager.Instance.GameEnded)
         {
             SoundManager.Instance.StopAll();
-            var timeToWait = SoundManager.Instance.Sounds.Find(s => s.AudioId == AudioId.Horror).AudioSource.clip.length;
+            var messageForEnd =
+                ScriptableObjectHolder.Instance.GameDatabase.MessageForEndGame.Find(
+                    m => m.EndOption == GameManager.Instance.End).Message;
+
+            var timeToWait = messageForEnd.Length * .1f;
             switch (GameManager.Instance.End)
             {
                 case EndOptions.Win:
@@ -52,7 +56,7 @@ public class HouseLevelManager : MonoBehaviour
                     break;
             }
 
-            HouseGuiManager.ShowMessageOfTheDay(ScriptableObjectHolder.Instance.GameDatabase.MessageForEndGame.Find(m => m.EndOption == GameManager.Instance.End).Message);
+            HouseGuiManager.ShowMessageOfTheDay(messageForEnd);
             return;
         }
 
@@ -82,6 +86,7 @@ public class HouseLevelManager : MonoBehaviour
     {
         SoundManager.Instance.PlayAudio(AudioId.Horror);
         yield return new WaitForSeconds(timeToWait);
+        SoundManager.Instance.Stop(AudioId.Horror);
         SoundManager.Instance.PlayAudio(sound);
     }
 }

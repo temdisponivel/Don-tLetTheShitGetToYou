@@ -5,26 +5,38 @@ using Random = System.Random;
 
 public class ShitterFactory
 {
-    public List<Shitter> GenerateShitters(int quantity)
+    private List<SocialPosition> _socialPositionValues = new List<SocialPosition>(Enum.GetValues(typeof(SocialPosition)) as SocialPosition[]);
+
+    private List<Sprite> _images;
+
+    private List<Sprite> Images
+    {
+        get
+        {
+            if (_images == null)
+                _images = new List<Sprite>(Resources.LoadAll<Sprite>("Textures"));
+
+            return _images;
+        }
+    } 
+
+    public List<Shitter> GenerateShitters(int quantity, float maxShitAmmount)
     {
         var result = new List<Shitter>(quantity);
 
-        var images = Resources.LoadAll<Sprite>("Textures");
-        var socialPositionValues = new List<SocialPosition>(Enum.GetValues(typeof(SocialPosition)) as SocialPosition[]);
+        
 
         var toAdd = new List<SocialPosition>();
-        for (int i = 0; i < socialPositionValues.Count; i++)
+        for (int i = 0; i < _socialPositionValues.Count; i++)
         {
-            var chance = ScriptableObjectHolder.Instance.GameConfiguration.SocialPositionByChance.Find(s => s.SocialPosition == socialPositionValues[i]).Chance;
+            var chance = ScriptableObjectHolder.Instance.GameConfiguration.SocialPositionByChance.Find(s => s.SocialPosition == _socialPositionValues[i]).Chance;
             for (int j = 0; j < chance; j++)
             {
-                toAdd.Add(socialPositionValues[i]);
+                toAdd.Add(_socialPositionValues[i]);
             }
         }
 
-        socialPositionValues.AddRange(toAdd);
-
-        var maxShit = ScriptableObjectHolder.Instance.GameConfiguration.MaxShitAmmount / (quantity * 1f);
+        _socialPositionValues.AddRange(toAdd);
         var random = new Random();
         for (int i = 0; i < quantity; i++)
         {
@@ -33,9 +45,9 @@ public class ShitterFactory
             var name = ScriptableObjectHolder.Instance.GameDatabase.Names[random.Next(0, ScriptableObjectHolder.Instance.GameDatabase.Names.Count)];
 
             shitter.Name = name;
-            shitter.ShitAmmount = .5f + (float)(random.NextDouble() * maxShit);
-            shitter.SpriteShitter = images[i % images.Length];
-            shitter.SocialPosition = socialPositionValues[random.Next(0, socialPositionValues.Count)];
+            shitter.ShitAmmount = .5f + (float)(random.NextDouble() * maxShitAmmount);
+            shitter.SpriteShitter = Images[random.Next(0, Images.Count)];
+            shitter.SocialPosition = _socialPositionValues[random.Next(0, _socialPositionValues.Count)];
 
             result.Add(shitter);
         }
