@@ -105,9 +105,7 @@ public class WorkGuiManager : MonoBehaviour
     private IEnumerator InnerPlayeMessage(Shitter shitter, string message, Action callback)
     {
         TextMessage.text = string.Empty;
-
-        StartCoroutine(ShowName(shitter));
-
+        
         StringBuilder messageBuilder = new StringBuilder(message.Length);
         for (int i = 0; i < message.Length; i++)
         {
@@ -118,24 +116,6 @@ public class WorkGuiManager : MonoBehaviour
 
         if (callback != null)
             callback();
-    }
-
-    private IEnumerator ShowName(Shitter shitter)
-    {
-        string shitterName = string.Format("{0} - {1}", shitter.Name, shitter.SocialPosition);
-
-        if (TextName.text == shitterName)
-            yield break;
-
-        TextName.text = string.Empty;
-        StringBuilder messageBuilder = new StringBuilder(shitterName.Length);
-        for (int i = 0; i < shitterName.Length; i++)
-        {
-            messageBuilder.Append(shitterName[i]);
-            TextName.text = messageBuilder.ToString();
-            yield return new WaitForSeconds(.1f);
-        }
-
     }
 
     private void SetButtons(bool enable)

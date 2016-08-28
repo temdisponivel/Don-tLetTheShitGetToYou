@@ -10,9 +10,10 @@ public class ClockManager : MonoBehaviour
     {
         this.gameObject.transform.parent.gameObject.SetActive(false);
         _initialAngle = this.transform.rotation.eulerAngles;
+        const float anglesPerHour = 180/8f; //180 angles in 8 hours
         GameManager.Instance.OnUpdateTime += () =>
         {
-            this.transform.rotation = Quaternion.Euler(_initialAngle + new Vector3(0, 0, (float) -(((15*8)/180f) * GameManager.Instance.CurrentHour)));
+            this.transform.rotation = Quaternion.Euler(0, 0, _initialAngle.z + (-anglesPerHour * (GameManager.Instance.CurrentHour - 9)));
         };
 
         SceneManager.sceneLoaded += (scene, mode) =>

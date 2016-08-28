@@ -60,6 +60,8 @@ public class GameManager : Singleton<GameManager>
 
     public bool ShownInitialMessage { get; set; }
 
+    public List<Shitter> TodaysShitters;
+
     #endregion
 
     #region Events
@@ -117,7 +119,7 @@ public class GameManager : Singleton<GameManager>
         int count = 8;
         while (count-- > 0)
         {
-            yield return new WaitForSeconds(15f);
+            yield return new WaitForSeconds(22.5f);
             CurrentHour++;
         }
         EndDay();
@@ -187,6 +189,8 @@ public class GameManager : Singleton<GameManager>
         {
             result.Add(AllTimeShitters[Random.Range(0, AllTimeShitters.Count)]);
         }
+
+        TodaysShitters = result;
 
         return result;
     }

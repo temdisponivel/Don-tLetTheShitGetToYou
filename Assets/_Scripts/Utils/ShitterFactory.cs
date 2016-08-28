@@ -22,7 +22,7 @@ public class ShitterFactory
             shitter.Name = name;
             shitter.Story = story;
             shitter.ShitAmmount = Random.Range(5, (int)ScriptableObjectHolder.Instance.GameConfiguration.MaxShitPerShitter);
-            shitter.SpriteShitter = images[Random.Range(0, images.Length)];
+            shitter.SpriteShitter = images[i % images.Length];
             shitter.SocialPosition = (SocialPosition)socialPositionValues.GetValue(Random.Range(0, socialPositionValues.Length));
 
             result.Add(shitter);

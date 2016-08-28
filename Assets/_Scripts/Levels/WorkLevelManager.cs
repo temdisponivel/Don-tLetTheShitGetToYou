@@ -44,6 +44,7 @@ public class WorkLevelManager : MonoBehaviour
     public void ShitterArrive(Shitter shitter)
     {
         _currentShitter = shitter;
+        QueueManager.RemovePeople(_currentShitter);
         WorkGuiManager.ShitterArrive(shitter, () =>
         {
             WorkGuiManager.AskPermition(shitter);
@@ -82,7 +83,6 @@ public class WorkLevelManager : MonoBehaviour
     private void OnShitterAccepted()
     {
         string message = _currentShitter.Accepted();
-        QueueManager.RemovePeople(_currentShitter);
         WorkGuiManager.ShowMessage(_currentShitter, message, () =>
         {
             StartCoroutine(ShitterShiting(_currentShitter));
@@ -92,7 +92,6 @@ public class WorkLevelManager : MonoBehaviour
     private void OnShitterDenied()
     {
         string message = _currentShitter.Denied();
-        QueueManager.RemovePeople(_currentShitter);
         WorkGuiManager.ShowMessage(_currentShitter, message, () =>
         {
             ShitterLeave(true);
