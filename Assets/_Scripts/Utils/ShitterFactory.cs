@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
+using Random = System.Random;
 
 public class ShitterFactory
 {
@@ -25,16 +25,17 @@ public class ShitterFactory
         socialPositionValues.AddRange(toAdd);
 
         var maxShit = ScriptableObjectHolder.Instance.GameConfiguration.MaxShitAmmount / (quantity * 1f);
+        var random = new Random();
         for (int i = 0; i < quantity; i++)
         {
             var shitter = new Shitter();
 
-            var name = ScriptableObjectHolder.Instance.GameDatabase.Names[Random.Range(0, ScriptableObjectHolder.Instance.GameDatabase.Names.Count)];
+            var name = ScriptableObjectHolder.Instance.GameDatabase.Names[random.Next(0, ScriptableObjectHolder.Instance.GameDatabase.Names.Count)];
 
             shitter.Name = name;
-            shitter.ShitAmmount = Random.Range(.5f, maxShit);
+            shitter.ShitAmmount = .5f + (float)(random.NextDouble() * maxShit);
             shitter.SpriteShitter = images[i % images.Length];
-            shitter.SocialPosition = socialPositionValues[Random.Range(0, socialPositionValues.Count)];
+            shitter.SocialPosition = socialPositionValues[random.Next(0, socialPositionValues.Count)];
 
             result.Add(shitter);
         }

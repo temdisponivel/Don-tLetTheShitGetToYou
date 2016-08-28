@@ -49,6 +49,6 @@ public class HouseGuiManager : MonoBehaviour
         StartCoroutine(CoroutineHelper.Instance.ShowText(message, (text) =>
         {
             TextMessage.text = text;
-        }, callback, waitForClickToCallback: true));
+        }, callback, waitForClickToCallback: true, playSound: true));
     }
 }

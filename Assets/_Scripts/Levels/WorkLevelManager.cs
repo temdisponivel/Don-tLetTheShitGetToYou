@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using Random = UnityEngine.Random;
+using Random = System.Random;
 
 public class WorkLevelManager : MonoBehaviour
 {
@@ -36,6 +36,14 @@ public class WorkLevelManager : MonoBehaviour
         }
 
         CoroutineHelper.Instance.WaitForSecondsAndCall(1f, UpdateQueue);
+        SoundManager.Instance.StopAll();
+        SoundManager.Instance.PlayAudio(AudioId.Horse, AudioId.BusyCity);
+        SoundManager.Instance.Stop(AudioId.Ambiance);
+    }
+
+    void OnDestroy()
+    {
+        SoundManager.Instance.StopAll();
     }
 
     #endregion
@@ -67,12 +75,55 @@ public class WorkLevelManager : MonoBehaviour
     {
         var shitAmmountPerTick = shitter.ShitAmmount / 100f;
         var timeToWait = shitter.TimeShitting / 100f;
+        StartCoroutine(MakeFartNoises(shitter.TimeShitting));
         for (int i = 0; i < 100; i++)
         {
             yield return new WaitForSeconds(timeToWait);
             GameManager.Instance.ShitAmmount += shitAmmountPerTick;
         }
         ShitterLeave(false);
+    }
+
+    private IEnumerator MakeFartNoises(float time)
+    {
+        var shortFartLenght = SoundManager.Instance.Sounds.Find(s => s.AudioId == AudioId.FartShort).AudioSource.clip.length;
+        var mediumFartLenght = SoundManager.Instance.Sounds.Find(s => s.AudioId == AudioId.FartMedium).AudioSource.clip.length;
+        var longFartLenght = SoundManager.Instance.Sounds.Find(s => s.AudioId == AudioId.FartLong).AudioSource.clip.length;
+
+        var startTime = Time.time;
+        float lastTimeShortFart = 0;
+        float lastTimeMediumFart = 0;
+        float lastTimeLongFart = 0;
+
+        var random = new Random();
+
+        while (Time.time - startTime < time)
+        {
+            float toWait = 0f;
+            float elapsedTime = (Time.time - startTime);
+            float secondsLeft = time - elapsedTime;
+
+            if (secondsLeft > longFartLenght && (Time.time - lastTimeLongFart) > longFartLenght && random.NextDouble() < .3f)
+            {
+                SoundManager.Instance.PlayAudio(AudioId.FartLong);
+                toWait = longFartLenght * 2;
+                lastTimeLongFart = Time.time;
+            }
+            else if (secondsLeft > mediumFartLenght && (Time.time - lastTimeMediumFart) > mediumFartLenght && random.NextDouble() < .5f)
+            {
+                SoundManager.Instance.PlayAudio(AudioId.FartMedium);
+                toWait = mediumFartLenght * 2;
+                lastTimeMediumFart = Time.time;
+            }
+            else if (secondsLeft > shortFartLenght && (Time.time - lastTimeShortFart) > shortFartLenght && random.NextDouble() < .5f)
+            {
+                SoundManager.Instance.PlayAudio(AudioId.FartShort);
+                toWait = shortFartLenght * 2;
+                lastTimeShortFart = Time.time;
+            }
+
+            yield return new WaitForSeconds(toWait);
+        }
     }
 
     public void ShitterLeave(bool denyied)
@@ -98,10 +149,11 @@ public class WorkLevelManager : MonoBehaviour
 
     private void OnShitterAccepted()
     {
+        SoundManager.Instance.PlayAudio(AudioId.Granted);
         string message = _currentShitter.Accepted();
 
         var possibleMessagesForAccept = ScriptableObjectHolder.Instance.GameDatabase.PlayerAcceptReplies.Find(d => d.SocialPosition == _currentShitter.SocialPosition);
-        var dialog = possibleMessagesForAccept.Dialogs[Random.Range(0, possibleMessagesForAccept.Dialogs.Count)];
+        var dialog = possibleMessagesForAccept.Dialogs[new Random().Next(0, possibleMessagesForAccept.Dialogs.Count)];
         WorkGuiManager.ShowMessage(_currentShitter, Shitter.DialogByDialogId[dialog], () =>
         {
             WorkGuiManager.ShowMessage(_currentShitter, message, () =>
@@ -114,7 +166,7 @@ public class WorkLevelManager : MonoBehaviour
     private void OnShitterDenied()
     {
         string message = _currentShitter.Denied();
-
+        SoundManager.Instance.PlayAudio(AudioId.Denyed);
         Action callback = () =>
         {
             ShitterLeave(true);
@@ -145,7 +197,7 @@ public class WorkLevelManager : MonoBehaviour
         }
 
         var possibleMessagesForDeny = ScriptableObjectHolder.Instance.GameDatabase.PlayerDeniesReplies.Find(d => d.SocialPosition == _currentShitter.SocialPosition);
-        var dialog = possibleMessagesForDeny.Dialogs[Random.Range(0, possibleMessagesForDeny.Dialogs.Count)];
+        var dialog = possibleMessagesForDeny.Dialogs[new Random().Next(0, possibleMessagesForDeny.Dialogs.Count)];
         WorkGuiManager.ShowMessage(_currentShitter, Shitter.DialogByDialogId[dialog], () =>
         {
             WorkGuiManager.ShowMessage(_currentShitter, message, callback);

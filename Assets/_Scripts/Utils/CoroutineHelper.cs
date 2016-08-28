@@ -29,7 +29,8 @@ public class CoroutineHelper : Singleton<CoroutineHelper>
         }
     }
 
-    public IEnumerator ShowText(string text, Action<string> setter, Action callback, float intervalChars = .1f, float delayCallback = .5f, bool waitForClickToCallback = false, bool skipWithClick = true)
+    public IEnumerator ShowText(string text, Action<string> setter, Action callback, float intervalChars = .1f, 
+        float delayCallback = .5f, bool waitForClickToCallback = false, bool skipWithClick = true, bool playSound = false)
     {
         bool clicked = false;
         Action buttonDownCallback = () =>
@@ -40,6 +41,10 @@ public class CoroutineHelper : Singleton<CoroutineHelper>
             ButtonDown += buttonDownCallback;
 
         StringBuilder messageBuilder = new StringBuilder(text.Length);
+
+        if (playSound)
+            SoundManager.Instance.PlayAudio(AudioId.Writing);
+
         for (int i = 0; i < text.Length; i++)
         {
             if (skipWithClick && clicked)
@@ -52,6 +57,9 @@ public class CoroutineHelper : Singleton<CoroutineHelper>
             setter(messageBuilder.ToString());
             yield return new WaitForSeconds(intervalChars);
         }
+
+        if (playSound)
+            SoundManager.Instance.Stop(AudioId.Writing);
 
         if (skipWithClick)
             ButtonDown -= buttonDownCallback;

@@ -160,10 +160,10 @@ public class GameManager : Singleton<GameManager>
 
         for (int i = 0; i < TodaysShitters.Count; i++)
         {
-            timeToWait += TodaysShitters[i].TimeShitting + Random.Range(1, 5); //random to account for dialogs
+            timeToWait += TodaysShitters[i].TimeShitting + Random.Range(5, 10); //random to account for dialogs
         }
 
-        timeToWait /= ScriptableObjectHolder.Instance.GameConfiguration.HoursPerDay;
+        timeToWait /= count;
 
         while (count-- > 0)
         {
@@ -265,7 +265,14 @@ public class GameManager : Singleton<GameManager>
 
     public void Reset()
     {
-        
+        _shitAmmount = 0;
+        CurrentDay = 0;
+        CurrentHour = 0;
+        TodaysShitters = new List<Shitter>();
+        ClericDenyed = 0;
+        ThreatCount = 0;
+        ClericMessageShowed = false;
+        GameEnded = false;
     }
 
     #endregion

@@ -6,6 +6,7 @@ public class GameDatabaseScriptableObject : ScriptableObject
     public string InitialMessage;
     public string LetterFromCleric;
     public string MessageForHouseThrashed;
+    public string TitleMessage;
 
     public List<string> Names;
     public List<DialogIdTuple> AllDialogs;
