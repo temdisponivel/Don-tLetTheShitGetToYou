@@ -65,7 +65,7 @@ public class GameManager : Singleton<GameManager>
 
     public bool CanDenyCleric
     {
-        get { return ClericDenyed <= 0; }
+        get { return ClericDenyed <= 1; }
     }
 
     private int _clericDenyed;
@@ -79,7 +79,7 @@ public class GameManager : Singleton<GameManager>
         {
             _clericDenyed = value;
 
-            if (_clericDenyed >= 0)
+            if (_clericDenyed >= 3)
             {
                 EndGame(EndOptions.DenyCleric);
             }
