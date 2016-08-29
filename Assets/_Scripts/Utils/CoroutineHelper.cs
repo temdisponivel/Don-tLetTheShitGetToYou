@@ -64,7 +64,7 @@ public class CoroutineHelper : Singleton<CoroutineHelper>
         if (skipWithClick)
             ButtonDown -= buttonDownCallback;
 
-        if (waitForClickToCallback)
+        if (waitForClickToCallback && !clicked)
             yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
 
         if (delayCallback > 0)

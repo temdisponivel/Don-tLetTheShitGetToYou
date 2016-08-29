@@ -64,18 +64,16 @@ public class Shitter
         DialogReplyById = new Dictionary<DialogId, DialogReplyTuple>();
         PlayerReplyById = new Dictionary<DialogId, DialogReplyTuple>();
 
-        var allDialogsReplies = ScriptableObjectHolder.Instance.GameDatabase.Replies;
 
+        var allDialogsReplies = ScriptableObjectHolder.Instance.GameDatabase.Replies;
         for (int i = 0; i < allDialogsReplies.Count; i++)
         {
             DialogReplyById[allDialogsReplies[i].Dialog] = allDialogsReplies[i];
         }
-
-        DialogReplyById = new Dictionary<DialogId, DialogReplyTuple>();
+        
 
         allDialogsReplies = ScriptableObjectHolder.Instance.GameDatabase.PlayerReplies;
-
-        for (int i = 0; i < PlayerReplyById.Count; i++)
+        for (int i = 0; i < allDialogsReplies.Count; i++)
         {
             PlayerReplyById[allDialogsReplies[i].Dialog] = allDialogsReplies[i];
         }

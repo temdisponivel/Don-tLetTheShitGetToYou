@@ -8,6 +8,8 @@ public class HouseLevelManager : MonoBehaviour
     public static HouseLevelManager Instance = null;
     public HouseGuiManager HouseGuiManager;
 
+    private bool _showingInitialMessage = false;
+
     void Awake()
     {
         Instance = this;
@@ -15,15 +17,43 @@ public class HouseLevelManager : MonoBehaviour
 
     void Start()
     {
+        HouseGuiManager.OnGoToWorkCallback += OnButtonCallback;
+
         if (GameManager.Instance.ShownInitialMessage)
         {
             ShowMessageOfTheDay();
         }
         else
         {
+            _showingInitialMessage = true;
+            HouseGuiManager.ChangeTextOfButton("Ok");
+
             string messageOfTheDay = string.Format(ScriptableObjectHolder.Instance.GameDatabase.InitialMessage,
                 ScriptableObjectHolder.Instance.GameConfiguration.EndGameDay);
-            HouseGuiManager.ShowMessage(messageOfTheDay, ShowMessageOfTheDay);
+            HouseGuiManager.ShowMessageOfTheDay(messageOfTheDay, null, true);
+        }
+    }
+
+    private void OnButtonCallback()
+    {
+        if (_showingInitialMessage)
+        {
+            GameManager.Instance.ShownInitialMessage = true;
+            _showingInitialMessage = false;
+            HouseGuiManager.ChangeTextOfButton("Go to work");
+            ShowMessageOfTheDay();
+        }
+        else
+        {
+            if (GameManager.Instance.GameEnded)
+            {
+                GameManager.Instance.Reset();
+                GameManager.Instance.LoadTitleScene();
+            }
+            else
+            {
+                GameManager.Instance.StartNewDay();
+            }
         }
     }
 
@@ -65,9 +95,11 @@ public class HouseLevelManager : MonoBehaviour
                     SoundManager.Instance.Stop(AudioId.Horror);
                     SoundManager.Instance.PlayAudio(sound);
                 }
-            });
+            }, false);
             return;
         }
+
+        bool hideDiary = true;
 
         string messageOfTheDay;
         var dataBase = ScriptableObjectHolder.Instance.GameDatabase;
@@ -86,8 +118,9 @@ public class HouseLevelManager : MonoBehaviour
         {
             SoundManager.Instance.PlayAudio(AudioId.Ambiance);
             messageOfTheDay = dataBase.WakeupMessages[Random.Range(0, dataBase.WakeupMessages.Count)];
+            hideDiary = false;
         }
 
-        HouseGuiManager.ShowMessageOfTheDay(messageOfTheDay, null);
+        HouseGuiManager.ShowMessageOfTheDay(messageOfTheDay, null, hideDiary);
     }
 }

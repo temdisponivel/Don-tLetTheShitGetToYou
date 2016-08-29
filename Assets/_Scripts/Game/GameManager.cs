@@ -183,7 +183,7 @@ public class GameManager : Singleton<GameManager>
         TodaysShitters = GetShittersForToday();
         for (int i = 0; i < TodaysShitters.Count; i++)
         {
-            timeToWait += TodaysShitters[i].TimeShitting + (float)(5 + (random.NextDouble() * 10)); //random to account for dialogs
+            timeToWait += TodaysShitters[i].TimeShitting + (float)(8 + (random.NextDouble() * 20)); //random to account for dialogs
         }
 
         timeToWait /= count;

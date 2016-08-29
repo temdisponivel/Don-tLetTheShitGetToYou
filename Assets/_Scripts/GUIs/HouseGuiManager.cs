@@ -10,6 +10,8 @@ public class HouseGuiManager : MonoBehaviour
     public Button GoToWorkButton;
     public Text TextMessage;
 
+    public event Action OnGoToWorkCallback;
+
     void Start()
     {
         if (GameManager.Instance.GameEnded)
@@ -20,19 +22,16 @@ public class HouseGuiManager : MonoBehaviour
 
     public void OnGoToWork()
     {
-        if (GameManager.Instance.GameEnded)
-        {
-            GameManager.Instance.Reset();
-            GameManager.Instance.LoadTitleScene();
-        }
-        else
-        {
-            GameManager.Instance.StartNewDay();
-        }
+        GoToWorkButton.transform.DOScale(Vector3.zero, .3f);
+
+        if (OnGoToWorkCallback != null)
+            OnGoToWorkCallback();
     }
 
-    public void ShowMessageOfTheDay(string message, Action callback)
+    public void ShowMessageOfTheDay(string message, Action callback, bool hideDiary)
     {
+        if (!hideDiary)
+            message = message.Insert(0, "Journal: ");
         InnerPlayeMessage(message, () =>
         {
             if (callback != null)
@@ -41,8 +40,10 @@ public class HouseGuiManager : MonoBehaviour
         });
     }
 
-    public void ShowMessage(string message, Action callback)
+    public void ShowMessage(string message, Action callback, bool hideDiary)
     {
+        if (!hideDiary)
+            message = message.Insert(0, "Journal: ");
         InnerPlayeMessage(message, callback);
     }
 
@@ -52,5 +53,10 @@ public class HouseGuiManager : MonoBehaviour
         {
             TextMessage.text = text;
         }, callback, waitForClickToCallback: true, playSound: true));
+    }
+
+    public void ChangeTextOfButton(string label)
+    {
+        GoToWorkButton.GetComponentInChildren<Text>().text = label;
     }
 }
