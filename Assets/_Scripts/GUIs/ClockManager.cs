@@ -12,12 +12,12 @@ public class ClockManager : MonoBehaviour
         this.gameObject.transform.parent.gameObject.SetActive(false);
         _initialAngle = this.transform.rotation.eulerAngles;
 
-        SceneManager.sceneLoaded += SceneChangeCallback;
+        GameManager.Instance.OnSceneLoad += SceneChangeCallback;
     }
 
     void OnDestroy()
     {
-        SceneManager.sceneLoaded -= SceneChangeCallback;
+        GameManager.Instance.OnSceneLoad -= SceneChangeCallback;
     }
 
     private void UpdateClock()
@@ -32,9 +32,9 @@ public class ClockManager : MonoBehaviour
                 }, targetColor, .5f);
     }
 
-    private void SceneChangeCallback(Scene scene, LoadSceneMode mode)
+    private void SceneChangeCallback(string name)
     {
-        if (scene.name == "Work")
+        if (name == "Work")
         {
             this.gameObject.transform.parent.gameObject.SetActive(true);
             

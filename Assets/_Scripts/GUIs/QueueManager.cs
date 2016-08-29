@@ -15,7 +15,8 @@ public class QueueManager : MonoBehaviour
         if (Shitters.Exists(i => i.Shitter == shitter))
             return;
 
-        var people = (GameObject)Instantiate(PeoplePrefab, LayoutGroup.transform);
+        var people = (GameObject)Instantiate(PeoplePrefab);
+        people.transform.SetParent(LayoutGroup.transform);
         var shitterItem = people.GetComponent<ShitterQueueItem>();
         shitterItem.Setup(shitter);
         

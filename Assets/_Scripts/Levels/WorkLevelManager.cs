@@ -166,7 +166,7 @@ public class WorkLevelManager : MonoBehaviour
             {
                 StartCoroutine(ShitterShiting(_currentShitter));
             });
-        }, true);
+        }, true, false);
     }
 
     private void OnShitterDenied()
@@ -205,8 +205,8 @@ public class WorkLevelManager : MonoBehaviour
         var possibleMessagesForAccept = Shitter.PlayerReplyById[_currentShitter.LastDialogId];
         WorkGuiManager.ShowMessage(_currentShitter, Shitter.DialogByDialogId[possibleMessagesForAccept.DenyDialog], () =>
         {
-            WorkGuiManager.ShowMessage(_currentShitter, message, callback);
-        }, true);
+            WorkGuiManager.ShowMessage(_currentShitter, message, callback, accepted: false);
+        }, true, false);
     }
 
     #endregion

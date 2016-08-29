@@ -101,7 +101,7 @@ public class WorkGuiManager : MonoBehaviour
         ShitCounter.fillAmount = GameManager.Instance.ShitAmmount / ScriptableObjectHolder.Instance.GameConfiguration.MaxShitAmmount;
     }
 
-    public void ShowMessage(Shitter shitter, string message, Action callback, bool fromPlayer = false)
+    public void ShowMessage(Shitter shitter, string message, Action callback, bool fromPlayer = false, bool accepted = true)
     {
         Color cached = TextMessage.color;
         if (fromPlayer)
@@ -115,16 +115,16 @@ public class WorkGuiManager : MonoBehaviour
 
             if (callback != null)
                 callback();
-        });
+        }, !accepted);
     }
 
-    private void InnerPlayeMessage(Shitter shitter, string message, Action callback)
+    private void InnerPlayeMessage(Shitter shitter, string message, Action callback, bool waitForClick = false)
     {
         TextMessage.text = string.Empty;
         StartCoroutine(CoroutineHelper.Instance.ShowText(message, (text) =>
         {
             TextMessage.text = text;
-        }, callback));
+        }, callback, waitForClickToCallback: waitForClick));
     }
 
     private void SetButtons(bool enable)

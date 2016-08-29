@@ -50,6 +50,7 @@ public class CoroutineHelper : Singleton<CoroutineHelper>
             if (skipWithClick && clicked)
             {
                 setter(text);
+                yield return new WaitForEndOfFrame();
                 break;
             }
 
@@ -61,11 +62,14 @@ public class CoroutineHelper : Singleton<CoroutineHelper>
         if (playSound)
             SoundManager.Instance.Stop(AudioId.Writing);
 
+        if (waitForClickToCallback)
+        {
+            clicked = false;
+            yield return new WaitUntil(() => clicked);
+        }
+
         if (skipWithClick)
             ButtonDown -= buttonDownCallback;
-
-        if (waitForClickToCallback && !clicked)
-            yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
 
         if (delayCallback > 0)
             yield return new WaitForSeconds(delayCallback);

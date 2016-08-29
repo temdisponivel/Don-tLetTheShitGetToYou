@@ -24,8 +24,6 @@ public class ShitterFactory
     {
         var result = new List<Shitter>(quantity);
 
-        
-
         var toAdd = new List<SocialPosition>();
         for (int i = 0; i < _socialPositionValues.Count; i++)
         {
@@ -35,8 +33,7 @@ public class ShitterFactory
                 toAdd.Add(_socialPositionValues[i]);
             }
         }
-
-        _socialPositionValues.AddRange(toAdd);
+        
         var random = new Random();
         for (int i = 0; i < quantity; i++)
         {
@@ -47,7 +44,7 @@ public class ShitterFactory
             shitter.Name = name;
             shitter.ShitAmmount = .5f + (float)(random.NextDouble() * maxShitAmmount);
             shitter.SpriteShitter = Images[random.Next(0, Images.Count)];
-            shitter.SocialPosition = _socialPositionValues[random.Next(0, _socialPositionValues.Count)];
+            shitter.SocialPosition = toAdd[random.Next(0, toAdd.Count)];
 
             result.Add(shitter);
         }

@@ -52,7 +52,7 @@ public class HouseGuiManager : MonoBehaviour
         StartCoroutine(CoroutineHelper.Instance.ShowText(message, (text) =>
         {
             TextMessage.text = text;
-        }, callback, waitForClickToCallback: true, playSound: true));
+        }, callback, waitForClickToCallback: false, playSound: true));
     }
 
     public void ChangeTextOfButton(string label)

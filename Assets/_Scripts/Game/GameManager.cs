@@ -117,6 +117,7 @@ public class GameManager : Singleton<GameManager>
     public event Action OnEnd;
     public event Action OnUpdateTime;
     public event Action OnShitAmmountChanges;
+    public event Action<string> OnSceneLoad;
 
     #endregion
 
@@ -209,6 +210,9 @@ public class GameManager : Singleton<GameManager>
         {
             SceneManager.LoadScene("Work");
 
+            if (OnSceneLoad != null)
+                OnSceneLoad("Work");
+
             DOTween.ToAlpha(() => BackgroundFade.color, (color) =>
             {
                 BackgroundFade.color = color;
@@ -229,6 +233,9 @@ public class GameManager : Singleton<GameManager>
         {
             SceneManager.LoadScene("House");
 
+            if (OnSceneLoad != null)
+                OnSceneLoad("House");
+
             DOTween.ToAlpha(() => BackgroundFade.color, (color) =>
             {
                 BackgroundFade.color = color;
@@ -244,6 +251,9 @@ public class GameManager : Singleton<GameManager>
         }, 1f, .5f).OnComplete(() =>
         {
             SceneManager.LoadScene("Title");
+
+            if (OnSceneLoad != null)
+                OnSceneLoad("Title");
 
             DOTween.ToAlpha(() => BackgroundFade.color, (color) =>
             {

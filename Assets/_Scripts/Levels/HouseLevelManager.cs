@@ -97,7 +97,7 @@ public class HouseLevelManager : MonoBehaviour
                     SoundManager.Instance.Stop(AudioId.Horror);
                     SoundManager.Instance.PlayAudio(sound);
                 }
-            }, false);
+            }, true);
             return;
         }
 
