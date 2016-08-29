@@ -12,8 +12,7 @@ public class GameDatabaseScriptableObject : ScriptableObject
     public List<DialogIdTuple> AllDialogs;
     public List<ShitterDialogs> ShitterDialogs;
     public List<DialogReplyTuple> Replies;
-    public List<ShitterDialogs> PlayerAcceptReplies;
-    public List<ShitterDialogs> PlayerDeniesReplies;
+    public List<DialogReplyTuple> PlayerReplies;
 
     public List<EndOptionMessageTuple> MessageForEndGame;
     public List<string> WakeupMessages;

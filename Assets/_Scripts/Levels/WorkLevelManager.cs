@@ -159,9 +159,8 @@ public class WorkLevelManager : MonoBehaviour
         SoundManager.Instance.PlayAudio(AudioId.Granted);
         string message = _currentShitter.Accepted();
 
-        var possibleMessagesForAccept = ScriptableObjectHolder.Instance.GameDatabase.PlayerAcceptReplies.Find(d => d.SocialPosition == _currentShitter.SocialPosition);
-        var dialog = possibleMessagesForAccept.Dialogs[new Random().Next(0, possibleMessagesForAccept.Dialogs.Count)];
-        WorkGuiManager.ShowMessage(_currentShitter, Shitter.DialogByDialogId[dialog], () =>
+        var possibleMessagesForAccept = Shitter.PlayerReplyById[_currentShitter.LastDialogId];
+        WorkGuiManager.ShowMessage(_currentShitter, Shitter.DialogByDialogId[possibleMessagesForAccept.AcceptDialog], () =>
         {
             WorkGuiManager.ShowMessage(_currentShitter, message, () =>
             {
@@ -203,9 +202,8 @@ public class WorkLevelManager : MonoBehaviour
             }
         }
 
-        var possibleMessagesForDeny = ScriptableObjectHolder.Instance.GameDatabase.PlayerDeniesReplies.Find(d => d.SocialPosition == _currentShitter.SocialPosition);
-        var dialog = possibleMessagesForDeny.Dialogs[new Random().Next(0, possibleMessagesForDeny.Dialogs.Count)];
-        WorkGuiManager.ShowMessage(_currentShitter, Shitter.DialogByDialogId[dialog], () =>
+        var possibleMessagesForAccept = Shitter.PlayerReplyById[_currentShitter.LastDialogId];
+        WorkGuiManager.ShowMessage(_currentShitter, Shitter.DialogByDialogId[possibleMessagesForAccept.AcceptDialog], () =>
         {
             WorkGuiManager.ShowMessage(_currentShitter, message, callback);
         }, true);

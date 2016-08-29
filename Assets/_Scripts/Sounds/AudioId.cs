@@ -14,4 +14,5 @@
     Threat,
     Writing,
     Stab,
+    Win,
 }

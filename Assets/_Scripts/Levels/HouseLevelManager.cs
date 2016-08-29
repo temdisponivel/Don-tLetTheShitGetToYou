@@ -41,6 +41,7 @@ public class HouseLevelManager : MonoBehaviour
             switch (GameManager.Instance.End)
             {
                 case EndOptions.Win:
+                    SoundManager.Instance.PlayAudio(AudioId.FartLong, AudioId.FartMedium, AudioId.FartShort);
                     break;
                 case EndOptions.ShitterInTheQueue:
                 case EndOptions.ShitOverflow:
@@ -59,8 +60,11 @@ public class HouseLevelManager : MonoBehaviour
 
             HouseGuiManager.ShowMessageOfTheDay(messageForEnd, () =>
             {
-                SoundManager.Instance.Stop(AudioId.Horror);
-                SoundManager.Instance.PlayAudio(sound);
+                if (sound != AudioId.Ambiance)
+                {
+                    SoundManager.Instance.Stop(AudioId.Horror);
+                    SoundManager.Instance.PlayAudio(sound);
+                }
             });
             return;
         }

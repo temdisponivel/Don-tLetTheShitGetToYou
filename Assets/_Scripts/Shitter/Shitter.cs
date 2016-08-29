@@ -16,13 +16,14 @@ public class Shitter
     public Sprite SpriteShitter;
     public SocialPosition SocialPosition;
 
-    private DialogId LastDialogId;
+    public DialogId LastDialogId;
 
     #region Static members
     
     public static Dictionary<SocialPosition, List<ShitterDialogs>> StoriesBySocialPosition { get; private set; }
     public static Dictionary<DialogId, string> DialogByDialogId { get; private set; }
     public static Dictionary<DialogId, DialogReplyTuple> DialogReplyById { get; private set; }
+    public static Dictionary<DialogId, DialogReplyTuple> PlayerReplyById { get; private set; }
 
     #region Bake
 
@@ -69,6 +70,15 @@ public class Shitter
         for (int i = 0; i < allDialogsReplies.Count; i++)
         {
             DialogReplyById[allDialogsReplies[i].Dialog] = allDialogsReplies[i];
+        }
+
+        DialogReplyById = new Dictionary<DialogId, DialogReplyTuple>();
+
+        allDialogsReplies = ScriptableObjectHolder.Instance.GameDatabase.PlayerReplies;
+
+        for (int i = 0; i < PlayerReplyById.Count; i++)
+        {
+            PlayerReplyById[allDialogsReplies[i].Dialog] = allDialogsReplies[i];
         }
     }
 
