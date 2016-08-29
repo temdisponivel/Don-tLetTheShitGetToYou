@@ -203,7 +203,7 @@ public class WorkLevelManager : MonoBehaviour
         }
 
         var possibleMessagesForAccept = Shitter.PlayerReplyById[_currentShitter.LastDialogId];
-        WorkGuiManager.ShowMessage(_currentShitter, Shitter.DialogByDialogId[possibleMessagesForAccept.AcceptDialog], () =>
+        WorkGuiManager.ShowMessage(_currentShitter, Shitter.DialogByDialogId[possibleMessagesForAccept.DenyDialog], () =>
         {
             WorkGuiManager.ShowMessage(_currentShitter, message, callback);
         }, true);

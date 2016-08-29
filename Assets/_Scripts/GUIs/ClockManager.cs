@@ -37,7 +37,7 @@ public class ClockManager : MonoBehaviour
         if (scene.name == "Work")
         {
             this.gameObject.transform.parent.gameObject.SetActive(true);
-            UpdateClock();
+            
             GameManager.Instance.OnUpdateTime += UpdateClock;
         }
         else

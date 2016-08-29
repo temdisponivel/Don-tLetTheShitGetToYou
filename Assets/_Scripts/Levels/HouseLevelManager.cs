@@ -66,7 +66,6 @@ public class HouseLevelManager : MonoBehaviour
                 ScriptableObjectHolder.Instance.GameDatabase.MessageForEndGame.Find(
                     m => m.EndOption == GameManager.Instance.End).Message;
 
-            SoundManager.Instance.PlayAudio(AudioId.Horror);
             AudioId sound = AudioId.Ambiance;
             switch (GameManager.Instance.End)
             {
@@ -87,6 +86,9 @@ public class HouseLevelManager : MonoBehaviour
                     sound = AudioId.Guillotine;
                     break;
             }
+
+            if (sound != AudioId.Ambiance)
+                SoundManager.Instance.PlayAudio(AudioId.Horror);
 
             HouseGuiManager.ShowMessageOfTheDay(messageForEnd, () =>
             {
