@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
 using DG.Tweening;
-using UnityEditor;
 using UnityEngine.UI;
 
 public class TitleGuiManager : MonoBehaviour

@@ -1,8 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using Random = UnityEngine.Random;
 
 [Serializable]
@@ -64,6 +62,7 @@ public class Shitter
     private static void BakeDialogreplyById()
     {
         DialogReplyById = new Dictionary<DialogId, DialogReplyTuple>();
+        PlayerReplyById = new Dictionary<DialogId, DialogReplyTuple>();
 
         var allDialogsReplies = ScriptableObjectHolder.Instance.GameDatabase.Replies;
 
